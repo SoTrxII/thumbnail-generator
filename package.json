@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "pretest": "./node_modules/.bin/jest --clearCache",
-    "test": "./node_modules/.bin/jest --config jestconfig.json",
+    "test": "./node_modules/.bin/jest --config jest.config.json",
     "prebuild": "npx shx rm -rf dist/*",
     "build": "tsc && npx shx cp package.json dist/package.json ",
     "build:f": "npm run build && faas-cli build -f thumbnail-generator.yml --shrinkwrap && npx shx cp -r package.json build/thumbnail-generator/function/ && npx shx cp -r dist build/thumbnail-generator/function/core && npx shx cp -r assets build/thumbnail-generator/function"
