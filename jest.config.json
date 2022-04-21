@@ -1,0 +1,23 @@
+{
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "transform": {
+    "^.+\\.tsx?$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "#core/(.*)": "<rootDir>/dist/$1"
+  },
+  "collectCoverageFrom": [
+    "src/**/*.ts",
+    "!old-src/**/*.ts",
+    "!dist/**/*.ts",
+    "!src/**/*.config.ts",
+    "!src/**/*.d.ts",
+    "!src/**/*.integration.ts"
+  ],
+  "modulePathIgnorePatterns": [
+    "<rootDir>/src-old",
+    "<rootDir>/dist",
+    "<rootDir>/build"
+  ]
+}
