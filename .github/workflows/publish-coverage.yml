@@ -13,6 +13,7 @@ jobs:
         with:
           node-version: '17'
       - run: npm install
+      - run: sudo apt update -y && sudo apt install ffmpeg ttf-liberation -y
       - run: npm test
       - name: Execute tests
         run: npm run test -- --coverage
