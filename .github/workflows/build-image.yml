@@ -29,7 +29,7 @@ jobs:
         run: npm run build
 
       - name: Give all access to build
-        run: sudo chmod -R 777 build/
+        run: sudo chmod -R 777 dist/
 
       - name: Generate dockerfiles for all functions
         uses: docker://openfaas/faas-cli:latest-root
