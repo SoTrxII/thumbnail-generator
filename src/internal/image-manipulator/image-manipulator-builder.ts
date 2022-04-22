@@ -258,7 +258,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     return this;
   }
 
-  buildAndRun(outPath?: string): Promise<void> {
+  async buildAndRun(outPath?: string): Promise<void> {
     //Resolve background
     if (this.background === undefined) {
       this.ffmpegCommand
@@ -283,7 +283,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     }
 
     if (!outPath) outPath = ImageManipulatorBuilder.generateTmpPath();
-    return new Promise(async (res, rej) => {
+    return await new Promise(async (res, rej) => {
       // Execute pipeline steps
       await Promise.all(this.pipeline.map(async (f) => await f()));
       this.ffmpegCommand

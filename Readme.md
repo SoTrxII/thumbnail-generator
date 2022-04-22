@@ -12,7 +12,7 @@ The following request
 // with body :
 // Note : A GET request with a body is non-standard. All parameters can also be
 // specified in the querysting. But as the QS limit of 2000 characters could
-// be reached by some presets, so a body is accepted
+// be reached by some presets, a body is accepted
 {
      "gmsAvatarUrl": ["https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"],
       "playersAvatarUrls": ["https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg", "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
