@@ -1,6 +1,6 @@
 # Thumbnail generator
 [![codecov](https://codecov.io/gh/SoTrxII/thumbnail-generator/branch/master/graph/badge.svg?token=GXIJLNIW7S)](https://codecov.io/gh/SoTrxII/thumbnail-generator)
-[![Docker Image Size](https://badgen.net/docker/size/sotrx/create-thumbnail/0.3.11?icon=docker&label=create-thumbnail)](https://hub.docker.com/r/sotrx/create-thumbnail/)
+[![Docker Image Size](https://badgen.net/docker/size/sotrx/create-thumbnail/0.3.12?icon=docker&label=create-thumbnail)](https://hub.docker.com/r/sotrx/create-thumbnail/)
 
 API to generate thumbnails using presets (see [Presets](#presets)).
 API definition is available here(TODO).
@@ -32,7 +32,7 @@ Using faas-cli:
 ```shell 
 # Deploying "get-players"
 faas-cli deploy \
---image "sotrx/create-thumbnail:0.3.11"\
+--image "sotrx/create-thumbnail:0.3.12"\
 --name "create-thumbnail"\
 --gateway <GTW_URL>
 ```
