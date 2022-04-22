@@ -33,7 +33,7 @@ jobs:
       - name: Build and push create-thumbnail func
         uses: docker/build-push-action@v2
         with:
-          context: ./build/get-players/
-          file: ./build/get-players/Dockerfile
+          context: ./build/thumbnail-generator/
+          file: ./build/thumbnail-generator/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/create-thumbnail:${{ steps.define_env.outputs.tag }}
