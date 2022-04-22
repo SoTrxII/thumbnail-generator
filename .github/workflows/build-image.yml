@@ -22,7 +22,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Transpile typescript
+      - name: Install deps
         run: npm install
 
       - name: Transpile typescript
@@ -34,7 +34,7 @@ jobs:
           args: build -f thumbnail-generator.yml --shrinkwrap
 
       - name: Copy required runtime artifacts
-        run: npm run build:copyartifacts
+        run: sudo npm run build:copyartifacts
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
