@@ -12,6 +12,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '17'
+      - run: npm install swagger-jsdoc
       - run: npm run doc
       - name: Generate Swagger UI
         uses: Legion2/swagger-ui-action@v1
