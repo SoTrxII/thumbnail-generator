@@ -17,12 +17,26 @@ container.bind<IFontCalculator>(TYPES.FontCalculator).to(FontCalculator);
 
 container
   .bind<IImageManipulatorBuilder>(TYPES.ImageManipulatorBuilder)
-  .to(ImageManipulatorBuilder);
+  .toDynamicValue(() => new ImageManipulatorBuilder());
 
-container.bind<IImageDownloader>(TYPES.ImageDownloader).to(ImageDownloader);
+container
+  .bind<IImageDownloader>(TYPES.ImageDownloader)
+  .toDynamicValue(() => new ImageDownloader());
 
-container.bind<ThumbnailPreset>(TYPES.ThumbnailPreset).to(ThumbRpg);
+container
+  .bind<ThumbnailPreset>(TYPES.ThumbnailPreset)
+  .toDynamicValue(
+    (context) =>
+      new ThumbRpg(
+        context.container.get(TYPES.FontCalculator),
+        context.container.get(TYPES.ImageManipulatorBuilder),
+        context.container.get(TYPES.ImageDownloader)
+      )
+  );
 
 container
   .bind<IThumbnailGenerator>(TYPES.ThumbnailGenerator)
-  .to(ThumbnailGenerator);
+  .toDynamicValue(
+    (context) =>
+      new ThumbnailGenerator(context.container.getAll(TYPES.ThumbnailPreset))
+  );
