@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Transpile typescript
-        uses: npm run build
+        run: npm run build
 
       - name: Generate dockerfiles for all functions
         uses: docker://openfaas/faas-cli:latest-root
@@ -31,7 +31,7 @@ jobs:
           args: build -f thumbnail-generator.yml --shrinkwrap
 
       - name: Copy required runtime artifacts
-        uses: npm run build:copyartifacts
+        run: npm run build:copyartifacts
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
