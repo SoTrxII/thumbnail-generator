@@ -23,6 +23,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Transpile typescript
+        run: npm install
+
+      - name: Transpile typescript
         run: npm run build
 
       - name: Generate dockerfiles for all functions
