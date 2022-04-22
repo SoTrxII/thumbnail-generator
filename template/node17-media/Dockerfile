@@ -3,7 +3,7 @@ FROM --platform=${TARGETPLATFORM:-linux/amd64} ghcr.io/openfaas/of-watchdog:0.9.
 # Takes node 17 image (170MB) and tries to reduce it as much as possible
 FROM --platform=${TARGETPLATFORM:-linux/amd64} node:17-alpine as build
 # Remove npm
-RUN rm -f /usr/local/lib/node_modules/npm && rm -f /usr/local/bin/npm /usr/local/bin/npx
+RUN rm -rf /usr/local/lib/node_modules/npm && rm -f /usr/local/bin/npm /usr/local/bin/npx
 # UPX node
 RUN apk add --no-cache upx && upx --best --lzma /usr/local/bin/node && apk del upx
 
