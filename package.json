@@ -6,6 +6,7 @@
   "scripts": {
     "pretest": "./node_modules/.bin/jest --clearCache",
     "test": "./node_modules/.bin/jest --config jest.config.json",
+    "doc": "node generate-documentation.js",
     "prebuild": "npx shx rm -rf dist/*",
     "build": "tsc && npx shx cp package.json dist/package.json ",
     "build:f": "npm run build && faas-cli build -f thumbnail-generator.yml --shrinkwrap && npm run build:copyartifacts",

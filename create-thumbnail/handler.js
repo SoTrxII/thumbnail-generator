@@ -6,6 +6,15 @@ const { resolve } = require("path");
 const { readFile, unlink } = require("fs/promises");
 const thg = container.get(TYPES.ThumbnailGenerator);
 
+/**
+ * @openapi
+ * /:
+ *   get:
+ *     description: Welcome to swagger-jsdoc!
+ *     responses:
+ *       200:
+ *         description: Returns a mysterious string.
+ */
 module.exports = async (event, context) => {
   // Check preset
   if (event.path === "/") {
