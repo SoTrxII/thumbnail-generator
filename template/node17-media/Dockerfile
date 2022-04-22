@@ -36,24 +36,24 @@ RUN mkdir -p /home/app/function
 
 # Wrapper/boot-strapper
 WORKDIR /home/app
-COPY package.json .yarnrc.yml ./
+COPY --chown=app:app package.json .yarnrc.yml ./
 
 # This ordering means the npm installation is cached for the outer function handler.
 RUN touch yarn.lock && yarn install
 
 # Copy outer function handler
-COPY index.js ./
+COPY --chown=app:app index.js ./
 
 # COPY function node packages and install, adding this as a separate
 # entry allows caching of npm install
 
 WORKDIR /home/app/function
-COPY function/*.json function/*.lock ./
+COPY --chown=app:app function/*.json function/*.lock ./
 
 RUN yarn plugin import workspace-tools && yarn workspaces focus --all --production
 
 # COPY function files and folders
-COPY function/ ./
+COPY --chown=app:app function/ ./
 
 
 # Set correct permissions to use non root user
