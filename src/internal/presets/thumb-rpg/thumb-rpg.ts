@@ -130,6 +130,7 @@ export class ThumbRpg extends ThumbnailPreset {
 
     const image = `${tmpdir()}/image-${Date.now()}.png`;
     await this.manipulator.buildAndRun(image);
+    await this.downloader.cleanUp();
     return image;
   }
 
