@@ -4,7 +4,6 @@ const { container } = require("#core/inversify.config.js");
 const { TYPES } = require("#core/types.js");
 const { resolve } = require("path");
 const { readFile, unlink } = require("fs/promises");
-const thg = container.get(TYPES.ThumbnailGenerator);
 
 /**
  * @openapi
@@ -16,6 +15,7 @@ const thg = container.get(TYPES.ThumbnailGenerator);
  *         description: Returns a mysterious string.
  */
 module.exports = async (event, context) => {
+  const thg = container.get(TYPES.ThumbnailGenerator);
   // Check preset
   if (event.path === "/") {
     return userError(context, new Error("No preset has been specified"));
