@@ -34,7 +34,7 @@ jobs:
           args: build -f thumbnail-generator.yml --shrinkwrap
 
       - name: Give all access to dist
-        run: sudo chmod -R 777 build
+        run: sudo chown -R $USER ./build && sudo chmod -R 700 build
 
       - name: Copy required runtime artifacts
         run: npm run build:copyartifacts
