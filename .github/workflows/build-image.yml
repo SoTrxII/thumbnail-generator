@@ -28,13 +28,13 @@ jobs:
       - name: Transpile typescript
         run: npm run build
 
-      - name: Give all access to build
-        run: sudo chmod -R 777 dist/
-
       - name: Generate dockerfiles for all functions
         uses: docker://openfaas/faas-cli:latest-root
         with:
           args: build -f thumbnail-generator.yml --shrinkwrap
+
+      - name: Give all access to dist
+        run: sudo chmod -R 777 build
 
       - name: Copy required runtime artifacts
         run: npm run build:copyartifacts
