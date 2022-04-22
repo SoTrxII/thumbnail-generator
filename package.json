@@ -8,7 +8,8 @@
     "test": "./node_modules/.bin/jest --config jest.config.json",
     "prebuild": "npx shx rm -rf dist/*",
     "build": "tsc && npx shx cp package.json dist/package.json ",
-    "build:f": "npm run build && faas-cli build -f thumbnail-generator.yml --shrinkwrap && npx shx cp -r package.json yarn.lock assets build/thumbnail-generator/function/ && npx shx echo nodeLinker: node-modules > build/thumbnail-generator/.yarnrc.yml.  && npx shx cp -r dist build/thumbnail-generator/function/core"
+    "build:f": "npm run build && faas-cli build -f thumbnail-generator.yml --shrinkwrap && npm run build:copyartifacts",
+    "build:copyartifacts": "npx shx cp -r package.json yarn.lock assets build/thumbnail-generator/function/ && npx shx echo nodeLinker: node-modules > build/thumbnail-generator/.yarnrc.yml.  && npx shx cp -r dist build/thumbnail-generator/function/core"
   },
   "dependencies": {
     "fluent-ffmpeg": "^2.1.2",
