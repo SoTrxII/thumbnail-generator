@@ -123,7 +123,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
   }
 
   /**
-   * Write a text on the thumbnail
+   * Write a text on the thumbnail with an alignment
    * @param text Text to write
    * @param alignment A position on the frame
    * @param margin x and y offset from the `alignment`
@@ -141,7 +141,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     font?: string,
     fontsDir?: string
   ): this {
-    const style: TextStyle = {
+    let style: TextStyle = {
       Fontsize: size,
       Outline: 1,
       Alignment: alignment,
@@ -149,14 +149,26 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
       MarginL: margin.x,
       Shadow: 1,
       PrimaryColour: ImageManipulatorBuilder.colorHexToAssHex(color),
-      Fontname: font,
     };
+    if (font !== undefined) {
+      style = Object.assign(style, { Fontname: font });
+    }
     if (fontsDir) {
       return this.drawText(text, style, fontsDir);
     }
     return this.drawText(text, style);
   }
 
+  /**
+   * Write a text on the thumbnail with only coordinates
+   * @deprecated Alignment 0 doesn't seem to work anymore on newer FFmpeg versions
+   * @param text
+   * @param coordinates
+   * @param size
+   * @param color
+   * @param font
+   * @param fontsDir
+   */
   withTextAt(
     text: string,
     coordinates: { x: string; y: string },
@@ -165,7 +177,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     font?: string,
     fontsDir?: string
   ): this {
-    const style: TextStyle = {
+    let style: TextStyle = {
       Fontsize: size,
       Outline: 1,
       Alignment: Alignment.NONE,
@@ -173,8 +185,10 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
       MarginL: coordinates.x,
       Shadow: 1,
       PrimaryColour: ImageManipulatorBuilder.colorHexToAssHex(color),
-      Fontname: font,
     };
+    if (font !== undefined) {
+      style = Object.assign(style, { Fontname: font });
+    }
     if (fontsDir) {
       return this.drawText(text, style, fontsDir);
     }
@@ -408,8 +422,6 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
    * @private
    */
   private drawText(text: string, style: TextStyle, fontsDir?: string): this {
-    // FFmpeg doesn't support unicode, convert the text to utf-8
-    //const santizedText = Buffer.from(text, "utf-8").toString();
     const subFile = `${tmpdir()}/sub_${hrtime().join("_")}`;
     this.pipeline.push(
       ImageManipulatorBuilder.createSubtitleFile

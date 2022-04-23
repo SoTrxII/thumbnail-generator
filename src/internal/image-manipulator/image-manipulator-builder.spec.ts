@@ -135,8 +135,23 @@ describe("Image Manipulator Builder", () => {
       .withTextAt(
         "MIAOU",
         { x: String(1280 / 2), y: String(720 / 2) },
-        127,
+        60,
         "white"
+      )
+      .buildAndRun();
+  });
+  it("Text with special characters", async () => {
+    await manipulator
+      .withBackgroundImage(
+        resolve(__dirname, "../../../assets/images/background-blue-nature.jpg")
+      )
+      .withScaling(String(1280), String(720))
+      .withTextAligned(
+        "MIœAOU",
+        Alignment.TOP_CENTER,
+        { x: 0, y: 40 },
+        100,
+        "#ffffff"
       )
       .buildAndRun();
   });
@@ -188,7 +203,7 @@ describe("Image Manipulator Builder", () => {
         "#ffffff"
       )
       .withTextAligned(
-        "\n\nLa revanche des poulets ninjas",
+        "\n\nChicken attack",
         Alignment.BOTTOM_CENTER,
         { x: 0, y: 30 },
         50,
