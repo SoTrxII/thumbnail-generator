@@ -16,8 +16,6 @@ import { Alignment } from "../../image-manipulator/image-manipulator-builder";
 import Vibrant = require("node-vibrant");
 
 interface ThumbRpgArgs {
-  // Players avatars
-  playersAvatarUrls: string[];
   // Game Master's Avatar
   gmsAvatarUrl: string[];
   // Title of the Tabletop RPg campaign
