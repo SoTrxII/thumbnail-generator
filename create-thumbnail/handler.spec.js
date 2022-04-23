@@ -9,6 +9,16 @@ const {
 } = require("fs");
 
 const { join } = require("path");
+const { container } = require("../src/inversify.config");
+const { Substitute } = require("@fluffy-spoon/substitute");
+const {
+  ThumbnailGenerator,
+} = require("../src/pkg/thumbnail-generator/thumbnail-generator");
+const { TYPES } = require("../src/types");
+const { env } = require("process");
+
+// Only execute these in local
+const itif = env.GITHUB_ACTIONS === undefined ? it : it.skip;
 
 describe("Create Thumbnail handler", () => {
   // Copying all assets
@@ -38,12 +48,17 @@ describe("Create Thumbnail handler", () => {
     expect(res.statusCode).toBe(400);
     expect(res.value.message.toLowerCase()).toContain("no preset");
   });
-  it("Default options value", async () => {
-    const res = await rpgThumbReq();
-    expect(res.statusCode).toBe(200);
-    expect(res.value).toBeInstanceOf(Buffer);
-    expect(res.value.length).toBeGreaterThan(0);
-  }, 20000);
+
+  itif(
+    "Default options value",
+    async () => {
+      const res = await rpgThumbReq();
+      expect(res.statusCode).toBe(200);
+      expect(res.value).toBeInstanceOf(Buffer);
+      expect(res.value.length).toBeGreaterThan(0);
+    },
+    10000
+  );
   describe("Invalid options", () => {
     it("optimizeImage", async () => {
       const res = await rpgThumbReq({
@@ -90,17 +105,20 @@ describe("Create Thumbnail handler", () => {
     });
   });
   describe("Preset :: Thumb-RPG", () => {
-    it("Ok on normal conditions", async () => {
-      const res = await rpgThumbReq();
-      expect(res.statusCode).toBe(200);
-      expect(res.value).toBeInstanceOf(Buffer);
-      expect(res.value.length).toBeGreaterThan(0);
-    }, 200000);
-
-    // Deleting all assets
-    afterAll(() => {
-      rmSync(join(__dirname, "assets"), { recursive: true, force: true });
-    });
+    itif(
+      "Ok on normal conditions",
+      async () => {
+        const res = await rpgThumbReq();
+        expect(res.statusCode).toBe(200);
+        expect(res.value).toBeInstanceOf(Buffer);
+        expect(res.value.length).toBeGreaterThan(0);
+      },
+      200000
+    );
+  });
+  // Deleting all assets
+  afterAll(() => {
+    rmSync(join(__dirname, "assets"), { recursive: true, force: true });
   });
 });
 
@@ -125,7 +143,7 @@ const validThumb = {
  * Request a thumbnail with rpg preset
  * @param opt
  */
-async function rpgThumbReq(opt) {
+async function rpgThumbReq(opt, handler) {
   const query = opt?.query ?? {};
   const body = opt?.body ?? validThumb;
   return await handle(

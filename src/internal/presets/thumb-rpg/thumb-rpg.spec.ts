@@ -57,5 +57,5 @@ describe("Thumb RPG", () => {
       fontDir: "dd",
     });
     console.log(image);
-  });
+  }, 20000);
 });
