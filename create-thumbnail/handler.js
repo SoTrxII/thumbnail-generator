@@ -8,7 +8,7 @@ const {
   InvalidPresetError,
   OptimizationError,
   ThumbnailSchemaError,
-} = require("#core/pkg/thumbnail-generator/thumbnail-generator");
+} = require("#core/pkg/thumbnail-generator/thumbnail-generator.js");
 
 const DEFAULT = {
   aspectRatio: 16 / 9,
