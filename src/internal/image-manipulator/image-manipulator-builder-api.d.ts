@@ -27,7 +27,7 @@ export interface TextStyle {
 }
 
 export interface IImageManipulatorBuilder {
-  withBackgroundImage(path: string): IImageManipulatorBuilder;
+  withBackgroundImage(path: string): this;
 
   withTextAt(
     text: string,
@@ -36,7 +36,7 @@ export interface IImageManipulatorBuilder {
     color: string,
     font?: string,
     fontsDir?: string
-  ): IImageManipulatorBuilder;
+  ): this;
 
   withImageAt(
     imagePath: string,
@@ -44,15 +44,15 @@ export interface IImageManipulatorBuilder {
     size: { width: string; height: string },
     rounded?: boolean,
     shadow?: boolean
-  ): IImageManipulatorBuilder;
+  ): this;
 
-  withScaling(width: string, height: string): IImageManipulatorBuilder;
+  withScaling(width: string, height: string): this;
 
   withBorders(
     coordinates: { x: string; y: string },
     size: { width: string; height: string },
     color: string
-  ): IImageManipulatorBuilder;
+  ): this;
 
   withTextAligned(
     text: string,
@@ -62,7 +62,7 @@ export interface IImageManipulatorBuilder {
     color: string,
     font?: string,
     fontsDir?: string
-  ): IImageManipulatorBuilder;
+  ): this;
 
   addShadowToImage(inFile: string, outFile: string): Promise<void>;
 

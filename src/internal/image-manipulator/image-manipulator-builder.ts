@@ -25,13 +25,42 @@ export enum Alignment {
 
 @injectable()
 export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
+  /** Background to use in the thumbnail. Will default to a black screen if not specified */
   private background: string;
+
+  /** FFMPEG sub-process **/
   private ffmpegCommand: FfmpegCommand;
+
+  /** Files to delete after the thumbnail has been generated.
+   * The building process will generate a lot of temp files, as FFMPEG mainly works with file inputs
+   */
   private filesToCleanup: string[] = [];
+
+  /** List of ffmpeg filters to add in a -filter_complex
+   * @see https://ffmpeg.org/ffmpeg-filters.html
+   */
   private filters: FilterSpecification[] = [];
+
+  /** Ffmpeg inputs loaded with -i. These are all files*/
   private inputs: string[] = [];
+
+  /** List of callbacks to be executed before the FFMPEG process is started
+   * Ex: the subtitle filter needs a subtitle file to be created. Creating it
+   * directly when the builder function is called would lead to this file not being
+   * deleted if the command is aborted. This is why all of these are executed just before
+   * the FFMpeg process starts, in the buildAndRun() function
+   * */
   private pipeline: Function[] = [];
+
+  /** Last ffmpeg input in the filterGraph. This is a loockback to the previous lastOutput
+   * Given a filtergraph of [0:v]filter[res], lastInput will be [O:v]
+   */
   private lastInput: string;
+
+  /** Last ffmpeg output in the filterGraph.
+   * As the background is always the first file input, the first ouput is always [O:v]
+   * Given a filtergraph of [0:v]filter[res], lastOutput is "res"
+   */
   private lastOutput = "0:v";
 
   constructor() {
@@ -40,26 +69,8 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
   }
 
   /**
-   * The provided path can be a Windows path
-   * @param path
-   * @private
-   */
-  private static sanitizePath(path: string): string {
-    return (
-      path
-        // Replace backslashes with forward slashes
-        .replace(/\\/g, "/")
-        // Escape windows drive notation ( C: -> C\\:)
-        .replace(/:/g, "\\\\:")
-    );
-  }
-
-  private static createSubtitleFile(text: string, outFile: string) {
-    writeFileSync(outFile, `1\n00:00:00,000 --> 00:00:01,000\n${text}`);
-  }
-
-  /**
-   * Ass format uses a weird bbggrr order insted of rrggbb
+   * Convert a color from the standard #rrggbb to &Hbbggrr of ass format
+   * Transparency will be ignored
    */
   private static colorHexToAssHex(hex: string) {
     const rawInput = hex.replace("#", "").trim();
@@ -69,15 +80,58 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     return `&H${bb}${gg}${rr}&`;
   }
 
-  private static generateTmpPath() {
-    return `${tmpdir()}/image-${Date.now()}.png`;
+  /**
+   * FFMpeg filters works with unix style paths.
+   * To support windows, we must escape slashes and colons
+   *
+   * Note : ffmpeg does in fact support Windows notation, but only in -i inputs.
+   * Using a Windows style path in filters will interpret it as a Unix path and errors
+   * @param path path to sanitize
+   * @returns escaped path
+   * @private
+   */
+  private static sanitizeWindowsPath(path: string): string {
+    return (
+      path
+        // Replace backslashes with forward slashes
+        .replace(/\\/g, "/")
+        // Escape windows drive notation ( C: -> C\\:)
+        .replace(/:/g, "\\\\:")
+    );
   }
 
-  withBackgroundImage(path: string): ImageManipulatorBuilder {
+  /**
+   * Write a subtitle file to be used to write text on the image.
+   *
+   * The file format in {index}\n{fromTime} --> {toTime}\n{textToWrite}
+   * but as the thumbnail is an image, the time arguments are not important
+   * @param text Text to write on the image
+   * @param outFile Where to write the file
+   * @private
+   */
+  private static createSubtitleFile(text: string, outFile: string) {
+    writeFileSync(outFile, `1\n00:00:00,000 --> 00:00:01,000\n${text}`);
+  }
+
+  /**
+   * Set the background of the thumbnail to the provided image
+   * @param path
+   */
+  withBackgroundImage(path: string): this {
     this.background = path;
     return this;
   }
 
+  /**
+   * Write a text on the thumbnail
+   * @param text Text to write
+   * @param alignment A position on the frame
+   * @param margin x and y offset from the `alignment`
+   * @param size text size, in pt
+   * @param color Text color in Hex #rrggbb notation. Transparency is ignored
+   * @param font Font name to write the text in. It must be installed on the system
+   * @param fontsDir Where to find the font, better not change it
+   */
   withTextAligned(
     text: string,
     alignment: Alignment,
@@ -86,7 +140,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     color: string,
     font?: string,
     fontsDir?: string
-  ): ImageManipulatorBuilder {
+  ): this {
     const style: TextStyle = {
       Fontsize: size,
       Outline: 1,
@@ -110,7 +164,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     color: string,
     font?: string,
     fontsDir?: string
-  ): ImageManipulatorBuilder {
+  ): this {
     const style: TextStyle = {
       Fontsize: size,
       Outline: 1,
@@ -127,6 +181,11 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     return this.drawText(text, style);
   }
 
+  /**
+   * Add a drop shadow to the image in the provided path
+   * @param inFile input file path
+   * @param outFile output file path
+   */
   async addShadowToImage(inFile: string, outFile: string): Promise<void> {
     const stream = await sharp(inFile);
     const { width, height } = await stream.metadata();
@@ -177,13 +236,21 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
       .toFile(outFile);
   }
 
+  /**
+   * Add an image on the thumbnail at specific coordinates
+   * @param imagePath image to add on the thumbnail
+   * @param coordinates x and y. Unexpected things can happen if x and y are over the image width
+   * @param size Size of the image
+   * @param rounded Apply a border-radius-like effect on the image to add before drawing it on the thumbnail
+   * @param withShadow Apply a drop shadow effect on the image before drawing it on the thumbnail
+   */
   withImageAt(
     imagePath: string,
     coordinates: { x: string; y: string },
     size: { width: string; height: string },
     rounded = false,
     withShadow = false
-  ): ImageManipulatorBuilder {
+  ): this {
     const nextSteps = [imagePath];
     // Path of the next pipeline step
     if (rounded) {
@@ -222,7 +289,12 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     return this;
   }
 
-  withScaling(width: string, height: string): ImageManipulatorBuilder {
+  /**
+   * Resize the thumbnail
+   * @param width
+   * @param height
+   */
+  withScaling(width: string, height: string): this {
     this.filters.push({
       filter: "scale",
       options: {
@@ -237,11 +309,17 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     return this;
   }
 
+  /**
+   * Add border to the image
+   * @param coordinates where to generate borders
+   * @param size border's thickness
+   * @param color border's color
+   */
   withBorders(
     coordinates: { x: string; y: string },
     size: { width: string; height: string },
     color: string
-  ): ImageManipulatorBuilder {
+  ): this {
     this.filters.push({
       filter: "pad",
       options: {
@@ -258,6 +336,10 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     return this;
   }
 
+  /**
+   * Generates the thumbnail.
+   * @param outPath Thumbnail path
+   */
   async buildAndRun(outPath?: string): Promise<void> {
     //Resolve background
     if (this.background === undefined) {
@@ -282,14 +364,14 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
       this.ffmpegCommand.complexFilter(this.filters).map(this.lastInput);
     }
 
-    if (!outPath) outPath = ImageManipulatorBuilder.generateTmpPath();
+    if (!outPath) outPath = `${tmpdir()}/image-${Date.now()}.png`;
     return await new Promise(async (res, rej) => {
       // Execute pipeline steps
       await Promise.all(this.pipeline.map(async (f) => await f()));
       this.ffmpegCommand
         .on("progress", (_) => {})
         .on("stderr", function (stderrLine) {
-          console.log("Stderr output: " + stderrLine + "\n");
+          //console.log("Stderr output: " + stderrLine + "\n");
         })
         .on("start", (cmdLine) => {
           console.log(cmdLine + "\n");
@@ -305,6 +387,12 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     });
   }
 
+  /**
+   * Prepare the ffmpeg -complex-filter to add another filter
+   *
+   * The last filter output becomes the next input and a new output name is generated
+   * @private
+   */
   private shiftFiltergraph() {
     this.lastInput = this.lastOutput;
     const lastFilterName =
@@ -312,11 +400,16 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     this.lastOutput = `${lastFilterName}${this.filters.length}`;
   }
 
-  private drawText(
-    text: string,
-    style: TextStyle,
-    fontsDir?: string
-  ): ImageManipulatorBuilder {
+  /**
+   * Generic draw text and the image
+   * @param text Draw to draw
+   * @param style all options provided by the subtitles filter
+   * @param fontsDir Fonts directory
+   * @private
+   */
+  private drawText(text: string, style: TextStyle, fontsDir?: string): this {
+    // FFmpeg doesn't support unicode, convert the text to utf-8
+    //const santizedText = Buffer.from(text, "utf-8").toString();
     const subFile = `${tmpdir()}/sub_${hrtime().join("_")}`;
     this.pipeline.push(
       ImageManipulatorBuilder.createSubtitleFile
@@ -329,11 +422,12 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
       .join(",");
 
     const options = {
-      filename: ImageManipulatorBuilder.sanitizePath(subFile),
+      filename: ImageManipulatorBuilder.sanitizeWindowsPath(subFile),
       force_style: styleString,
     };
     if (fontsDir) {
-      options["fontsdir"] = ImageManipulatorBuilder.sanitizePath(fontsDir);
+      options["fontsdir"] =
+        ImageManipulatorBuilder.sanitizeWindowsPath(fontsDir);
     }
     this.filters.push({
       filter: "subtitles",
@@ -345,6 +439,15 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     return this;
   }
 
+  /**
+   * Round the image with path `inFile` to another file `outPath`.
+   * This is similar to CSS border radius
+   * @param inFile input file path
+   * @param outFile output file path
+   * @param withShadow if true add a drop shadow. Default: false
+   * // TODO : Remove size constraints
+   * @private
+   */
   private async roundImage(inFile, outFile, withShadow = false) {
     this.filesToCleanup.push(outFile);
     const width = 400,
