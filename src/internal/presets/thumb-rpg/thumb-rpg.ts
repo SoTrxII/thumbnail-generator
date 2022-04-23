@@ -38,10 +38,14 @@ export class ThumbRpg extends ThumbnailPreset {
     backgroundUrl:
       "https://res.cloudinary.com/datfhmsze/image/upload/c_thumb,w_200,g_face/v1595876755/deafault_campaign_background_tgfowg.jpg",
   };
+  private static readonly DEFAULT_OPTIONS = {
+    size: { width: 1280, height: 720 },
+  };
   /** Max sizes of a centered title/subtitle **/
   private static readonly BOUNDARIES = {
     title: { width: 850, height: 300 },
-    subtitle: { width: 300, height: 200 },
+    subtitle: { width: 300, height: 250 },
+    episodeIndex: { width: 220, height: 220 },
   };
 
   constructor(
@@ -99,13 +103,23 @@ export class ThumbRpg extends ThumbnailPreset {
   async buildThumbnail(args: ThumbRpgArgs): Promise<string> {
     const subtitleFontSize = this.fontCalculator.getIdealFontSizeForScreen(
       args.episodeTitle,
-      ThumbRpg.BOUNDARIES.subtitle
+      this.scaleBoundaries(
+        ThumbRpg.BOUNDARIES.subtitle,
+        ThumbRpg.DEFAULT_OPTIONS.size,
+        this.options.size
+      )
     );
 
-    /*const titleFontSize = this.fontCalculator.getIdealFontSizeForScreen(
-            args.title,
-            ThumbRpg.BOUNDARIES.title
-        );*/
+    const titleSize = this.scaleSize(
+      20,
+      ThumbRpg.DEFAULT_OPTIONS.size,
+      this.options.size
+    );
+    const episodeIndexSize = this.scaleSize(
+      40,
+      ThumbRpg.DEFAULT_OPTIONS.size,
+      this.options.size
+    );
     // Download the background image from its url and get the dominant colors for the borders
     const [colorPalette, tempBgImage] = await Promise.all([
       Vibrant.from(args.backgroundUrl).getPalette(),
@@ -120,11 +134,15 @@ export class ThumbRpg extends ThumbnailPreset {
     const logoPath = await this.downloader.download(args.logoUrl);
 
     this.setBackground(tempBgImage, colorPalette.LightVibrant.getHex())
-      .setTitle(args.title, 20, "#ffffff")
-      .setEpisodeNumber(args.episodeIndex, 40, "#ffffff")
+      .setTitle(args.title, titleSize, "#ffffff")
+      .setEpisodeNumber(args.episodeIndex, episodeIndexSize, "#ffffff")
       .setSubTitle(args.episodeTitle, subtitleFontSize, "#ffffff")
       .setGmsAvatar(gmsImages)
-      .setLogo(logoPath);
+      .setLogo(logoPath)
+      .setFinalSize({
+        width: this.options.size.width,
+        height: this.options.size.height,
+      });
 
     const image = `${tmpdir()}/image-${Date.now()}.png`;
     await this.manipulator.buildAndRun(image);
@@ -202,8 +220,8 @@ export class ThumbRpg extends ThumbnailPreset {
       .withBackgroundImage(backgroundPath)
       //Scaling the image first
       .withScaling(
-        String(this.options.size.width),
-        String(this.options.size.height)
+        String(ThumbRpg.DEFAULT_OPTIONS.size.width),
+        String(ThumbRpg.DEFAULT_OPTIONS.size.height)
       )
       .withBorders(
         {
@@ -218,8 +236,8 @@ export class ThumbRpg extends ThumbnailPreset {
       )
       //Scaling with added border
       .withScaling(
-        String(this.options.size.width),
-        String(this.options.size.height)
+        String(ThumbRpg.DEFAULT_OPTIONS.size.width),
+        String(ThumbRpg.DEFAULT_OPTIONS.size.height)
       );
 
     return this;
@@ -256,7 +274,7 @@ export class ThumbRpg extends ThumbnailPreset {
    * @param path
    * @private
    */
-  setLogo(path: string) {
+  setLogo(path: string): this {
     this.manipulator.withImageAt(
       path,
       {
@@ -268,5 +286,15 @@ export class ThumbRpg extends ThumbnailPreset {
         height: String(120),
       }
     );
+    return this;
+  }
+
+  /**
+   * Scale the thumbnail to its final size
+   * @param size
+   */
+  setFinalSize(size: { width: number; height: number }): this {
+    this.manipulator.withScaling(String(size.width), String(size.height));
+    return this;
   }
 }

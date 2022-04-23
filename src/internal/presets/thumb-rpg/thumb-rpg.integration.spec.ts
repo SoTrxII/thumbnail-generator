@@ -21,14 +21,15 @@ describe("Thumb RPG integration testing", () => {
     const data = {
       gmsAvatarUrl: [DEFAULT_IMG],
       playersAvatarUrls: [DEFAULT_IMG, DEFAULT_IMG],
-      title: "Squawk",
-      episodeTitle: "Squaaaaawwwk",
+      title: "Squawk Squawk Squawk Squawk",
+      episodeTitle:
+        "Squak squak squak squak squak squak squak squak squak squak squak squak squak squak squak squak squak squak v",
       episodeIndex: 1,
       backgroundUrl: DEFAULT_IMG,
       logoUrl: DEFAULT_IMG,
     };
     await thumbRPG.build(data, {
-      size: { width: 1280, height: 720 },
+      size: { width: 1920, height: 1080 },
       fontDir: resolve(__dirname, "../../../../assets/fonts/"),
       defaultFontPath: "liberation-mono/LiberationMono-Regular.ttf",
       optimizeImage: false,
