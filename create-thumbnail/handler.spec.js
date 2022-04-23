@@ -9,12 +9,6 @@ const {
 } = require("fs");
 
 const { join } = require("path");
-const { container } = require("../src/inversify.config");
-const { Substitute } = require("@fluffy-spoon/substitute");
-const {
-  ThumbnailGenerator,
-} = require("../src/pkg/thumbnail-generator/thumbnail-generator");
-const { TYPES } = require("../src/types");
 const { env } = require("process");
 
 // Only execute these in local
