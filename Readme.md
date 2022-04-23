@@ -79,7 +79,17 @@ To deploy the functions, the simplest method is to use faas-cli.
 ```
 
 
-## Presets
+## Presets and dynamic routing
+To render a thumbnail, the function uses **preset**. A preset is a template defining how to handle data.
+Each preset can define its own schema and has its own implementation.
+At runtime a route parameter is used to define which preset is chosen.
+
+Example:
+
+````sh
+/function/create-thumbnail/thumb-rp # Will use the preset "thumb-rpg"
+````
+
 
 ## Development
 
@@ -88,7 +98,7 @@ To deploy the functions, the simplest method is to use faas-cli.
 
 To build the function, multiple steps have to be executed :
 - Transpile the Typescript code in Javascript to dist/
-- Generate the shrinkwrap build for the function
+- Generate a shrinkwrap build for the function
 - Copy the transpiled code into the function directory
 - Copy/create yarn related file (lock, package.json, yarnrc)
 
