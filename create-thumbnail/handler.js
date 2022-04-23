@@ -18,12 +18,40 @@ const DEFAULT = {
 
 /**
  * @openapi
- * /:
+ *
+ * /thumb-rpg:
  *   get:
- *     description: Welcome to swagger-jsdoc!
- *     responses:
+ *      description: Get a thumbnail with preset rpg
+ *      responses:
  *       200:
- *         description: Returns a mysterious string.
+ *         description: Thumbnail generated
+ *       400:
+ *         description: Parameters errors
+ *       500:
+ *         description: Thumbnail couldn't be generated
+ *      consumes:
+ *        - application/json
+ *      produces:
+ *        - image/png
+ *      parameters:
+ *        - name: width
+ *          in: query
+ *          description: Width of the generated thumbnail
+ *          required: false
+ *          type: integer
+ *          format: int32
+ *        - name: height
+ *          in: query
+ *          description: Height of the generated thumbnail
+ *          required: false
+ *          type: integer
+ *          format: int32
+ *        - name: optimizeImage
+ *          in: query
+ *          description: Whether to optimize the thumbnail after its been generated
+ *          required: false
+ *          type: boolean
+
  */
 module.exports = async (event, context) => {
   const thg = container.get(TYPES.ThumbnailGenerator);
