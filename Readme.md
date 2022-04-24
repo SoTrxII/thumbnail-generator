@@ -14,9 +14,7 @@ The following request
 // specified in the querysting. But as the QS limit of 2000 characters could
 // be reached by some presets, a body is accepted
 {
-     "gmsAvatarUrl": ["https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"],
-      "playersAvatarUrls": ["https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg", "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
-    ],
+      "gmsAvatarUrl": ["https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"],
       "title": "Squawk",
       "episodeTitle": "Squaaaaawwwk",
       "episodeIndex": 1,
@@ -30,7 +28,6 @@ Would lead to the following result:
 ## Deploy
 Using faas-cli:
 ```shell 
-# Deploying "get-players"
 faas-cli deploy \
 --image "sotrx/create-thumbnail:0.5.2"\
 --name "create-thumbnail"\
@@ -48,12 +45,8 @@ metadata:
   name: join-game
   namespace: openfaas-fn
 spec:
-  name: join-game
-  image: sotrx/join-game:1.2.11
-  environment:
-    ROLL20_BASE_URL: https://app.roll20.net/
-    ROLL20_PASSWORD: <BOT_PASSWORD>
-    ROLL20_USERNAME: <BOT_USERNAME>
+  name: create-thumbnail
+  image: sotrx/create-thumbnail:0.5.2
 ```
 
 ## Configure
