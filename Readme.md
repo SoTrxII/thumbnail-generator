@@ -3,7 +3,7 @@
 [![Docker Image Size](https://badgen.net/docker/size/sotrx/create-thumbnail/0.5.2?icon=docker&label=create-thumbnail)](https://hub.docker.com/r/sotrx/create-thumbnail/)
 
 API to generate thumbnails using presets (see [Presets](#presets)).
-API definition is available here(TODO).
+API documentation is available [here](https://sotrxii.github.io/thumbnail-generator)
 
 ## Example 
 The following request 
