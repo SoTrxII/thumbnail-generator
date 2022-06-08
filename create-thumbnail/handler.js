@@ -63,17 +63,7 @@ module.exports = async (event, context) => {
 
   // Resolve options
   // OptimizeImage : boolean -> default false
-  if (
-    event.query.optimizeImage !== undefined &&
-    event.query.optimizeImage !== true &&
-    event.query.optimizeImage !== false
-  ) {
-    return userError(
-      context,
-      new Error("Invalid option provided : optimizeImage must be a boolean")
-    );
-  }
-  const optimizeImage = event.query.optimizeImage ?? DEFAULT.optimizeImage;
+  const optimizeImage = event.query?.optimizeImage ?? DEFAULT.optimizeImage;
 
   // Size
   // If neither width nor height is provided, default to 720p

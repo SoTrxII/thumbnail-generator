@@ -54,22 +54,6 @@ describe("Create Thumbnail handler", () => {
     10000
   );
   describe("Invalid options", () => {
-    it("optimizeImage", async () => {
-      const res = await rpgThumbReq({
-        query: {
-          optimizeImage: 1,
-        },
-      });
-      expect(res.statusCode).toBe(400);
-      expect(res.value.message).toContain("optimizeImage");
-      const res2 = await rpgThumbReq({
-        query: {
-          optimizeImage: "ddd",
-        },
-      });
-      expect(res2.statusCode).toBe(400);
-      expect(res2.value.message).toContain("optimizeImage");
-    });
     it("size :: 0", async () => {
       const res = await rpgThumbReq({
         query: {
