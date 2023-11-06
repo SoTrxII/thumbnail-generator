@@ -8,7 +8,7 @@ import {
 import { container } from "./inversify.config.js";
 import { TYPES } from "./types.js";
 import { IThumbnailGenerator } from "./pkg/thumbnail-generator/thumbnail-generator-api.js";
-import { resolve } from "path";
+import {basename, resolve} from "path";
 import { IObjectStore } from "./internal/object-store/objet-store-api.js";
 import {thumbnail} from "./proto/thumbnail.js";
 import ThumbnailRequest = thumbnail.ThumbnailRequest;
@@ -40,11 +40,15 @@ async function createThumbnail(
     });
     console.log("Final image path : ", imgPath);
     await store.create(imgPath);
+    const res = new ThumbnailResponse();
+    res.thumbnailKey = basename(imgPath);
+    callback(null, res);
   } catch (e) {
     console.log(` ${e.constructor.name}: ${e.toString()}`);
     callback(e, null);
   }
-  callback(null, new ThumbnailResponse());
+
+
 }
 class Impl extends UnimplementedThumbnailService {
   CreateThumbnail(call: ServerUnaryCall<thumbnail.ThumbnailRequest, thumbnail.ThumbnailResponse>, callback: sendUnaryData<thumbnail.ThumbnailResponse>): void {
