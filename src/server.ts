@@ -17,13 +17,13 @@ import UnimplementedThumbnailService = thumbnail.UnimplementedThumbnailService;
 
 const server = new Server();
 const PORT = 50051;
-const gen = container.get<IThumbnailGenerator>(TYPES.ThumbnailGenerator);
 const store = container.get<IObjectStore>(TYPES.ObjectStore);
 
 async function createThumbnail(
   call: ServerUnaryCall<ThumbnailRequest, ThumbnailResponse>,
   callback: sendUnaryData<ThumbnailResponse>,
 ) {
+  const gen = container.get<IThumbnailGenerator>(TYPES.ThumbnailGenerator);
   console.log("createThumbnail", call.request.toObject());
   const args = {
     gmsAvatarUrl: call.request.gmsAvatarUrl,
@@ -36,9 +36,9 @@ async function createThumbnail(
   try {
     const imgPath = await gen.buildWithPreset("thumb-rpg", args, {
       size: { width: 1280, height: 720 },
-      fontDir: "./assets/fonts/",
+      fontDir: resolve("./assets/fonts/"),
     });
-    console.log("imgPath", imgPath);
+    console.log("Final image path : ", imgPath);
     await store.create(imgPath);
   } catch (e) {
     console.log(` ${e.constructor.name}: ${e.toString()}`);
@@ -46,14 +46,13 @@ async function createThumbnail(
   }
   callback(null, new ThumbnailResponse());
 }
-class Cot extends UnimplementedThumbnailService {
+class Impl extends UnimplementedThumbnailService {
   CreateThumbnail(call: ServerUnaryCall<thumbnail.ThumbnailRequest, thumbnail.ThumbnailResponse>, callback: sendUnaryData<thumbnail.ThumbnailResponse>): void {
     createThumbnail(call, callback);
   }
-
 }
 
-server.addService(UnimplementedThumbnailService.definition, new Cot());
+server.addService(UnimplementedThumbnailService.definition, new Impl());
 
 server.bindAsync(`0.0.0.0:${PORT}`, ServerCredentials.createInsecure(), () => {
   console.log("Thumbnail server started on port " + PORT + " 🚀");

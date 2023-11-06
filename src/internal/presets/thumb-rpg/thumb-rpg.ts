@@ -10,10 +10,14 @@ import { tmpdir } from "os";
 import { TYPES } from "../../../types.js";
 import { IFontCalculator } from "../../font-calculator/font-calculator-api.js";
 import { IImageManipulatorBuilder } from "../../image-manipulator/image-manipulator-builder-api.js";
-import { IImageDownloader } from "../../image-downloader/image-downloader-api.js";
+import {
+  IImageDownloader,
+  Image,
+} from "../../image-downloader/image-downloader-api.js";
 import { join } from "path";
 import { Alignment } from "../../image-manipulator/image-manipulator-builder.js";
 import Vibrant from "node-vibrant";
+import("disposablestack/auto");
 
 interface ThumbRpgArgs {
   // Game Master's Avatar
@@ -120,35 +124,37 @@ export class ThumbRpg extends ThumbnailPreset {
       ThumbRpg.DEFAULT_OPTIONS.size,
       this.options.size,
     );
-    console.log(`Args : ${JSON.stringify(args)}`);
     // Also download gms images and log
     // Download the background image from its url and get the dominant colors for the borders
-    const bgPath = await this.downloader.download(args.backgroundUrl);
-    const colorPlatte = await Vibrant.from(bgPath).getPalette();
+    await using bg = await this.downloader.download(args.backgroundUrl);
+    const colorPlatte = await Vibrant.from(bg.path).getPalette();
 
-    // Also download gms images and logo
-    const gmsImgProm = await Promise.allSettled(
-      args.gmsAvatarUrl.map(async (a) => await this.downloader.download(a)),
+    await using stack = new AsyncDisposableStack();
+    const aRes = await Promise.allSettled(
+      args.gmsAvatarUrl.map((a) => this.downloader.download(a)),
     );
-    gmsImgProm
-      .filter((p) => p.status === "rejected")
-      .forEach((p: PromiseRejectedResult) => {
-        console.error(`Error while downloading gms avatar : ${p.reason}`);
+
+    aRes
+      .filter((r) => r.status === "rejected")
+      .forEach((r: PromiseRejectedResult) =>
+        console.warn(`Impossible to download : ${r.reason}`),
+      );
+
+    const gmsImages = aRes
+      .filter((r) => r.status === "fulfilled")
+      .map((r: PromiseFulfilledResult<Image>) => {
+        stack.use(r.value);
+        return r.value;
       });
 
-    const gmsImages = gmsImgProm
-      .filter((p) => p.status === "fulfilled")
-      .map((p: PromiseFulfilledResult<string>) => p.value);
+    await using logo = await this.downloader.download(args.logoUrl);
 
-    const logoPath = await this.downloader.download(args.logoUrl);
-
-    console.log(`Logo : ${logoPath}`);
-    this.setBackground(bgPath, colorPlatte.LightVibrant.hex)
+    this.setBackground(bg.path, colorPlatte.LightVibrant.hex)
       .setTitle(args.title, titleSize, "#ffffff")
       .setEpisodeNumber(args.episodeIndex, episodeIndexSize, "#ffffff")
       .setSubTitle(args.episodeTitle, subtitleFontSize, "#ffffff")
-      .setGmsAvatar(gmsImages)
-      .setLogo(logoPath)
+      .setGmsAvatar(gmsImages.map((i) => i.path))
+      .setLogo(logo.path)
       .setFinalSize({
         width: this.options.size.width,
         height: this.options.size.height,
@@ -156,7 +162,6 @@ export class ThumbRpg extends ThumbnailPreset {
 
     const image = `${tmpdir()}/image-${Date.now()}.png`;
     await this.manipulator.buildAndRun(image);
-    await this.downloader.cleanUp();
     return image;
   }
 
