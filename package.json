@@ -3,6 +3,8 @@
   "version": "2.0.0",
   "author": "Sotrx",
   "license": "MIT",
+  "type": "module",
+  "exports": "./server.js",
   "scripts": {
     "pretest": "./node_modules/.bin/jest --clearCache",
     "test": "./node_modules/.bin/jest --config jest.config.json",
@@ -10,7 +12,7 @@
     "prebuild": "npx shx rm -rf dist/*",
     "start:dev": "npm run build && node dist/server.js",
     "start:dapr": "dapr run --app-id thumbnail-generator --app-port 50051 --app-protocol grpc --resources-path ./dapr/components -- npm run start:dev",
-    "proto": "npx grpc_tools_node_protoc --proto_path=./src/proto --js_out=\"import_style=commonjs,binary:./src/proto/\"  --ts_out=grpc_js:./src/proto --grpc_out=grpc_js:./src/proto  src/proto/thumbnail.proto ",
+    "proto": "npx grpc_tools_node_protoc --proto_path=./src/proto --js_out=\"import_style=commonjs:./src/proto/\"  --ts_out=grpc_js:./src/proto --grpc_out=grpc_js:./src/proto  src/proto/thumbnail.proto",
     "build": "tsc && npx shx cp -r package.json assets dist/"
   },
   "dependencies": {
@@ -23,7 +25,7 @@
     "imagemin-pngquant": "^9.0.2",
     "inversify": "^6.0.2",
     "jsonschema": "^1.4.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.3.2",
     "node-vibrant": "^3.2.1-alpha.1",
     "reflect-metadata": "^0.1.13",
     "sharp": "^0.32.6",
@@ -37,8 +39,6 @@
     "@types/imagemin": "^7.0.0",
     "@types/jest": "^27.4.1",
     "@types/node": "^20.8.10",
-    "@types/node-fetch": "^2.5.10",
-    "@types/sharp": "^0.32.0",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.9.1",
     "eslint": "^8.13.0",
@@ -48,6 +48,7 @@
     "grpc_tools_node_protoc_ts": "^5.3.3",
     "jest": "^27.5.1",
     "prettier": "^3.0.3",
+    "protoc-gen-ts": "^0.8.7",
     "swagger-jsdoc": "^6.2.1",
     "ts-jest": "^27.1.4",
     "typescript": "^5.2.2"

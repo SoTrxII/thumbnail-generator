@@ -1,17 +1,17 @@
 import "reflect-metadata";
-import { ExternalObjectStore } from "./external-objet-store";
+import { ExternalObjectStore } from "./external-objet-store.js";
 import { basename, join } from "path";
 import { createHash } from "crypto";
 import { readFile } from "fs/promises";
-import { DaprObjectStorageAdapter } from "./dapr-object-storage-adapter";
+import { DaprObjectStorageAdapter } from "./dapr-object-storage-adapter.js";
 import { DaprClient } from "@dapr/dapr";
-import { ObjectStoreError } from "./objet-store-api";
+import { ObjectStoreError } from "./objet-store-api.js";
 
 describe("Object store :: Integration", () => {
   const objStore = new ExternalObjectStore(
-    new DaprObjectStorageAdapter(new DaprClient().binding, "object-store")
+    new DaprObjectStorageAdapter(new DaprClient().binding, "object-store"),
   );
-  const sampleFile = join(__dirname, "../../assets/welcome.opus");
+  const sampleFile = join(import.meta.url.replace("file://", ""), "../../assets/welcome.opus");
   // Key used to retrieve the file
   const fileKey = basename(sampleFile);
 
@@ -33,7 +33,7 @@ describe("Object store :: Integration", () => {
 
     it("Non existing key", async () => {
       await expect(objStore.retrieve("not-exist")).rejects.toThrowError(
-        ObjectStoreError
+        ObjectStoreError,
       );
     });
   });

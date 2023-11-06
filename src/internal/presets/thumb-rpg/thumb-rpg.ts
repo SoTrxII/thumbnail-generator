@@ -1,18 +1,18 @@
 import { inject, injectable } from "inversify";
-import { ThumbnailPreset } from "../thumbnail-preset-api";
+import { ThumbnailPreset } from "../thumbnail-preset-api.js";
 import { validate } from "jsonschema";
-import * as schema from "./schema.json";
+import schema from "./schema.json" assert { type: "json" };
 import {
   GenerationOptions,
   ThumbnailSchemaError,
-} from "../../../pkg/thumbnail-generator/thumbnail-generator";
+} from "../../../pkg/thumbnail-generator/thumbnail-generator.js";
 import { tmpdir } from "os";
-import { TYPES } from "../../../types";
-import { IFontCalculator } from "../../font-calculator/font-calculator-api";
-import { IImageManipulatorBuilder } from "../../image-manipulator/image-manipulator-builder-api";
-import { IImageDownloader } from "../../image-downloader/image-downloader-api";
+import { TYPES } from "../../../types.js";
+import { IFontCalculator } from "../../font-calculator/font-calculator-api.js";
+import { IImageManipulatorBuilder } from "../../image-manipulator/image-manipulator-builder-api.js";
+import { IImageDownloader } from "../../image-downloader/image-downloader-api.js";
 import { join } from "path";
-import { Alignment } from "../../image-manipulator/image-manipulator-builder";
+import { Alignment } from "../../image-manipulator/image-manipulator-builder.js";
 import Vibrant from "node-vibrant";
 
 interface ThumbRpgArgs {

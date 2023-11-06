@@ -7,21 +7,21 @@ import {
   IBucketListingOptions,
   IObjectStoreProxy,
   ObjectStoreError,
-} from "./objet-store-api";
-import { TYPES } from "../../types";
+} from "./objet-store-api.js";
+import { TYPES } from "../../types.js";
 
 @injectable()
 export class ExternalObjectStore {
   constructor(
     @inject(TYPES.ObjectStoreProxy)
-    private readonly objStoreProxy: IObjectStoreProxy
+    private readonly objStoreProxy: IObjectStoreProxy,
   ) {}
 
   async create(...filePaths: string[]): Promise<number> {
     await this.assertFileExists(...filePaths);
 
     const uploads = await Promise.allSettled(
-      filePaths.map((p) => this.objStoreProxy.create(p, basename(p)))
+      filePaths.map((p) => this.objStoreProxy.create(p, basename(p))),
     );
     const failedUploads = uploads.filter((up) => up.status === "rejected");
 
@@ -29,7 +29,7 @@ export class ExternalObjectStore {
       throw new ObjectStoreError(
         failedUploads
           .map((fail: PromiseRejectedResult) => fail.reason)
-          .join("\n")
+          .join("\n"),
       );
     return uploads.length;
   }
@@ -37,7 +37,7 @@ export class ExternalObjectStore {
   async retrieve(...filenames: string[]): Promise<Map<string, Buffer>> {
     // Attempt to download all files concurrently
     const downloads = await Promise.allSettled(
-      filenames.map((name) => this.objStoreProxy.retrieve(name))
+      filenames.map((name) => this.objStoreProxy.retrieve(name)),
     );
 
     // If any downloads failed, abort all
@@ -46,13 +46,13 @@ export class ExternalObjectStore {
       throw new ObjectStoreError(
         failedDownloads
           .map((fail: PromiseRejectedResult) => fail.reason)
-          .join("\n")
+          .join("\n"),
       );
 
     // Return a map name -> data
     const fileMap = new Map<string, Buffer>();
     downloads.forEach((dl: PromiseFulfilledResult<any>, index) =>
-      fileMap.set(filenames.at(index), Buffer.from(dl.value, "base64"))
+      fileMap.set(filenames.at(index), Buffer.from(dl.value, "base64")),
     );
     return fileMap;
   }
@@ -60,7 +60,7 @@ export class ExternalObjectStore {
   async delete(...filenames: string[]): Promise<void> {
     // Attempt to delete all files concurrently
     const deletions = await Promise.allSettled(
-      filenames.map((name) => this.objStoreProxy.delete(name))
+      filenames.map((name) => this.objStoreProxy.delete(name)),
     );
 
     // If any deletions failed (wrong ACL ?)
@@ -69,7 +69,7 @@ export class ExternalObjectStore {
       throw new ObjectStoreError(
         failedDeletions
           .map((fail: PromiseRejectedResult) => fail.reason)
-          .join("\n")
+          .join("\n"),
       );
   }
 
@@ -87,7 +87,7 @@ export class ExternalObjectStore {
    */
   async assertFileExists(...files: string[]): Promise<void> {
     const fileExists = await Promise.allSettled(
-      files.map(async (p) => access(p, constants.F_OK | constants.R_OK))
+      files.map(async (p) => access(p, constants.F_OK | constants.R_OK)),
     );
     const nonExistingFiles = fileExists.filter((p) => p.status === "rejected");
     if (nonExistingFiles.length > 0) {

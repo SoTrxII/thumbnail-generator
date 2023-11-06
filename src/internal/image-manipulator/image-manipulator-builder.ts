@@ -1,6 +1,5 @@
 import { injectable } from "inversify";
-import ffmpeg from "fluent-ffmpeg";
-import { FfmpegCommand, FilterSpecification } from "fluent-ffmpeg";
+import ffmpeg, { FfmpegCommand, FilterSpecification } from "fluent-ffmpeg";
 import { tmpdir } from "os";
 import sharp from "sharp";
 import { unlinkSync, writeFileSync } from "fs";
@@ -8,7 +7,7 @@ import { hrtime } from "process";
 import {
   IImageManipulatorBuilder,
   TextStyle,
-} from "./image-manipulator-builder-api";
+} from "./image-manipulator-builder-api.js";
 
 export enum Alignment {
   NONE,
@@ -139,7 +138,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     size: number,
     color: string,
     font?: string,
-    fontsDir?: string
+    fontsDir?: string,
   ): this {
     let style: TextStyle = {
       Fontsize: size,
@@ -175,7 +174,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     size: number,
     color: string,
     font?: string,
-    fontsDir?: string
+    fontsDir?: string,
   ): this {
     let style: TextStyle = {
       Fontsize: size,
@@ -222,7 +221,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
         cy="${(height + SHADOW_MARGIN * 2) / 2 + SHADOW_OFFSET}"
         fill="rgba(0, 0, 0, ${SHADOW_OPACITY})"
       />
-    </svg>`)
+    </svg>`),
     )
       .blur(SHADOW_BLUR)
       .toBuffer();
@@ -263,7 +262,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     coordinates: { x: string; y: string },
     size: { width: string; height: string },
     rounded = false,
-    withShadow = false
+    withShadow = false,
   ): this {
     const nextSteps = [imagePath];
     // Path of the next pipeline step
@@ -274,7 +273,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
         this.roundImage
           .bind(this, nextSteps[nextSteps.length - 2])
           .bind(this, nextSteps[nextSteps.length - 1])
-          .bind(this, withShadow)
+          .bind(this, withShadow),
       );
     }
     this.inputs.push(nextSteps[nextSteps.length - 1]);
@@ -332,7 +331,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
   withBorders(
     coordinates: { x: string; y: string },
     size: { width: string; height: string },
-    color: string
+    color: string,
   ): this {
     this.filters.push({
       filter: "pad",
@@ -426,7 +425,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
     this.pipeline.push(
       ImageManipulatorBuilder.createSubtitleFile
         .bind(this, text)
-        .bind(this, subFile)
+        .bind(this, subFile),
     );
     this.filesToCleanup.push(subFile);
     const styleString = Object.entries(style)
@@ -466,7 +465,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
       r = width / 2,
       height = 400,
       circleShape = Buffer.from(
-        `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`
+        `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`,
       );
 
     await sharp(inFile)

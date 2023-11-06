@@ -1,7 +1,7 @@
 import "reflect-metadata";
-import { InvalidPresetError, ThumbnailGenerator } from "./thumbnail-generator";
+import { InvalidPresetError, ThumbnailGenerator } from "./thumbnail-generator.js";
 import { Substitute } from "@fluffy-spoon/substitute";
-import { ThumbnailPreset } from "../../internal/presets/thumbnail-preset-api";
+import { ThumbnailPreset } from "../../internal/presets/thumbnail-preset-api.js";
 import { resolve } from "path";
 import { tmpdir } from "os";
 import { unlink } from "fs/promises";
@@ -13,7 +13,7 @@ describe("Thumbnail-generator", () => {
   it("Should error gracefully on an unregistered template", async () => {
     await expect(
       async () =>
-        await thg.buildWithPreset(mockPreset.name + "xx", undefined, undefined)
+        await thg.buildWithPreset(mockPreset.name + "xx", undefined, undefined),
     ).rejects.toThrowError(InvalidPresetError);
   });
 
@@ -27,16 +27,16 @@ describe("Thumbnail-generator", () => {
     const outImage = `${tmpdir()}/opti_${Date.now()}`;
     it("jpg", async () => {
       const baseImage = resolve(
-        __dirname,
-        "../../../assets/images/background-blue-nature.jpg"
+        import.meta.url.replace("file://", ""),
+        "../../../assets/images/background-blue-nature.jpg",
       );
       await thg.optimizeImage(baseImage, outImage);
     });
 
     it("png", async () => {
       const baseImage = resolve(
-        __dirname,
-        "../../../assets/images/sample-rpg-thumbnail.png"
+        import.meta.url.replace("file://", ""),
+        "../../../assets/images/sample-rpg-thumbnail.png",
       );
       await thg.optimizeImage(baseImage, outImage);
     });

@@ -15,12 +15,12 @@ export interface IFontCalculator {
   getSizeOf(
     string: string,
     fontSize: number,
-    screenWidth: number
+    screenWidth: number,
   ): FontPixelSize;
 
   getIdealFontSizeForScreen(
     string: string,
-    screen: { width: number; height: number }
+    screen: { width: number; height: number },
   ): number;
 
   getNbLinesOf(string: string, fontSize: number, screenWidth: number): number;

@@ -1,4 +1,4 @@
-import { Alignment } from "./image-manipulator-builder";
+import { Alignment } from "./image-manipulator-builder.js";
 
 export interface TextStyle {
   Name?: string;
@@ -35,7 +35,7 @@ export interface IImageManipulatorBuilder {
     size: number,
     color: string,
     font?: string,
-    fontsDir?: string
+    fontsDir?: string,
   ): this;
 
   withImageAt(
@@ -43,7 +43,7 @@ export interface IImageManipulatorBuilder {
     coordinates: { x: string; y: string },
     size: { width: string; height: string },
     rounded?: boolean,
-    shadow?: boolean
+    shadow?: boolean,
   ): this;
 
   withScaling(width: string, height: string): this;
@@ -51,7 +51,7 @@ export interface IImageManipulatorBuilder {
   withBorders(
     coordinates: { x: string; y: string },
     size: { width: string; height: string },
-    color: string
+    color: string,
   ): this;
 
   withTextAligned(
@@ -61,7 +61,7 @@ export interface IImageManipulatorBuilder {
     size: number,
     color: string,
     font?: string,
-    fontsDir?: string
+    fontsDir?: string,
   ): this;
 
   addShadowToImage(inFile: string, outFile: string): Promise<void>;

@@ -1,19 +1,22 @@
 import { Container } from "inversify";
-import { TYPES } from "./types";
-import { FontCalculator } from "./internal/font-calculator/font-calculator";
-import { IFontCalculator } from "./internal/font-calculator/font-calculator-api";
-import { IImageManipulatorBuilder } from "./internal/image-manipulator/image-manipulator-builder-api";
-import { ImageManipulatorBuilder } from "./internal/image-manipulator/image-manipulator-builder";
-import { IImageDownloader } from "./internal/image-downloader/image-downloader-api";
-import { ImageDownloader } from "./internal/image-downloader/image-downloader";
-import { ThumbnailPreset } from "./internal/presets/thumbnail-preset-api";
-import { ThumbRpg } from "./internal/presets/thumb-rpg/thumb-rpg";
-import { ThumbnailGenerator } from "./pkg/thumbnail-generator/thumbnail-generator";
-import { IThumbnailGenerator } from "./pkg/thumbnail-generator/thumbnail-generator-api";
+import { TYPES } from "./types.js";
+import { FontCalculator } from "./internal/font-calculator/font-calculator.js";
+import { IFontCalculator } from "./internal/font-calculator/font-calculator-api.js";
+import { IImageManipulatorBuilder } from "./internal/image-manipulator/image-manipulator-builder-api.js";
+import { ImageManipulatorBuilder } from "./internal/image-manipulator/image-manipulator-builder.js";
+import { IImageDownloader } from "./internal/image-downloader/image-downloader-api.js";
+import { ImageDownloader } from "./internal/image-downloader/image-downloader.js";
+import { ThumbnailPreset } from "./internal/presets/thumbnail-preset-api.js";
+import { ThumbRpg } from "./internal/presets/thumb-rpg/thumb-rpg.js";
+import { ThumbnailGenerator } from "./pkg/thumbnail-generator/thumbnail-generator.js";
+import { IThumbnailGenerator } from "./pkg/thumbnail-generator/thumbnail-generator-api.js";
 import { CommunicationProtocolEnum, DaprClient } from "@dapr/dapr";
-import { DaprObjectStorageAdapter } from "./internal/object-store/dapr-object-storage-adapter";
-import {IObjectStore, IObjectStoreProxy} from "./internal/object-store/objet-store-api";
-import {ExternalObjectStore} from "./internal/object-store/external-objet-store";
+import { DaprObjectStorageAdapter } from "./internal/object-store/dapr-object-storage-adapter.js";
+import {
+  IObjectStore,
+  IObjectStoreProxy,
+} from "./internal/object-store/objet-store-api.js";
+import { ExternalObjectStore } from "./internal/object-store/external-objet-store.js";
 
 export const container = new Container();
 const DAPR_GRPC_PORT = process.env.DAPR_GRPC_PORT ?? "50002";

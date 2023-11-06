@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { GenerationOptions } from "../../pkg/thumbnail-generator/thumbnail-generator";
+import { GenerationOptions } from "../../pkg/thumbnail-generator/thumbnail-generator.js";
 
 @injectable()
 export abstract class ThumbnailPreset {
@@ -15,16 +15,11 @@ export abstract class ThumbnailPreset {
    */
   public async run(
     args: Record<string, any>,
-    options: GenerationOptions
+    options: GenerationOptions,
   ): Promise<string> {
     this.options = options;
     return this.build(args);
   }
-
-  protected abstract build(
-    args: Record<string, any>,
-    options?: GenerationOptions
-  ): Promise<string>;
 
   /**
    * Scale a text size from a given size to another
@@ -37,7 +32,7 @@ export abstract class ThumbnailPreset {
   scaleSize(
     size: number,
     from: { width: number; height: number },
-    to: { width: number; height: number }
+    to: { width: number; height: number },
   ): number {
     //pythagorean theorem
     const diagFrom = Math.sqrt(from.width ** 2 + from.height ** 2);
@@ -56,7 +51,7 @@ export abstract class ThumbnailPreset {
   scaleBoundaries(
     bounds: { width: number; height: number },
     from: { width: number; height: number },
-    to: { width: number; height: number }
+    to: { width: number; height: number },
   ): { width: number; height: number } {
     const widthScaling = to.width / from.width;
     const heightScaling = to.height / from.height;
@@ -66,4 +61,9 @@ export abstract class ThumbnailPreset {
       height: bounds.height * heightScaling,
     };
   }
+
+  protected abstract build(
+    args: Record<string, any>,
+    options?: GenerationOptions,
+  ): Promise<string>;
 }

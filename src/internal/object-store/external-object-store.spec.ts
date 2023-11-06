@@ -1,21 +1,21 @@
 import "reflect-metadata";
-import { ExternalObjectStore } from "./external-objet-store";
+import { ExternalObjectStore } from "./external-objet-store.js";
 import { basename, join } from "path";
 import { Arg, Substitute } from "@fluffy-spoon/substitute";
-import { DaprObjectStorageAdapter } from "./dapr-object-storage-adapter";
-import { ObjectStoreError } from "./objet-store-api";
+import { DaprObjectStorageAdapter } from "./dapr-object-storage-adapter.js";
+import { ObjectStoreError } from "./objet-store-api.js";
 
 describe("External Object Store", () => {
-  const sampleFile = join(__dirname, "../../assets/welcome.opus");
+  const sampleFile = join(import.meta.url.replace("file://", ""), "../../assets/welcome.opus");
   const sampleKey = basename(sampleFile);
-  const notAFile = join(__dirname, "../../assets/idonotexist.opus");
+  const notAFile = join(import.meta.url.replace("file://", ""), "../../assets/idonotexist.opus");
 
   describe("Check if file exists", () => {
     const objStore = getObjStore();
 
     it("Ok", async () => {
       await expect(
-        objStore.assertFileExists(sampleFile, sampleFile)
+        objStore.assertFileExists(sampleFile, sampleFile),
       ).resolves.not.toThrow();
     });
     it("Ko", async () => {
@@ -23,7 +23,7 @@ describe("External Object Store", () => {
     });
     it("Mixed, one ok, one ko", async () => {
       await expect(
-        objStore.assertFileExists(sampleFile, notAFile)
+        objStore.assertFileExists(sampleFile, notAFile),
       ).rejects.toThrow();
     });
   });
@@ -40,7 +40,7 @@ describe("External Object Store", () => {
     it("an existing file but failing", async () => {
       const objStore = getObjStore({ create: true });
       await expect(objStore.create(sampleFile)).rejects.toThrowError(
-        ObjectStoreError
+        ObjectStoreError,
       );
     });
   });
@@ -53,7 +53,7 @@ describe("External Object Store", () => {
     it("an existing file but failing", async () => {
       const objStore = getObjStore({ retrieve: true });
       await expect(objStore.retrieve(sampleKey)).rejects.toThrowError(
-        ObjectStoreError
+        ObjectStoreError,
       );
     });
   });
@@ -66,7 +66,7 @@ describe("External Object Store", () => {
     it("an existing file but failing", async () => {
       const objStore = getObjStore({ delete: true });
       await expect(objStore.delete(sampleKey)).rejects.toThrowError(
-        ObjectStoreError
+        ObjectStoreError,
       );
     });
   });
@@ -93,7 +93,7 @@ function getObjStore(
     retrieve: boolean;
     list: boolean;
     delete: boolean;
-  }>
+  }>,
 ) {
   const methods = Object.assign(
     {},
@@ -103,7 +103,7 @@ function getObjStore(
       list: false,
       delete: false,
     },
-    fails
+    fails,
   );
 
   const adapter = Substitute.for<DaprObjectStorageAdapter>();

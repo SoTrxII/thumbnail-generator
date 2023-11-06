@@ -1,7 +1,6 @@
 import { injectable } from "inversify";
-import { Font } from "fontkit";
-import { FontPixelSize, IFontCalculator } from "./font-calculator-api";
-import fontkit from "fontkit";
+import { openSync, Font } from "fontkit";
+import { FontPixelSize, IFontCalculator } from "./font-calculator-api.js";
 
 @injectable()
 export class FontCalculator implements IFontCalculator {
@@ -19,11 +18,8 @@ export class FontCalculator implements IFontCalculator {
    * Read a font from the provided path
    * @param fontInit
    */
-  set font(fontInit: string | Buffer) {
-    // This is a private method, we have to ignore typescript warning
-    // to use it anyway
-    // @ts-ignore
-    this._font = fontkit.openSync(fontInit);
+  set font(fontInit: string) {
+    this._font = openSync(fontInit);
   }
 
   get fullName() {
@@ -67,8 +63,8 @@ export class FontCalculator implements IFontCalculator {
    */
 
   /*private round(x): number {
-      return (x + 32) & -64;
-    }*/
+        return (x + 32) & -64;
+      }*/
 
   /**
    * Return the height needed to write string on a screen of screenwidth width
@@ -95,7 +91,7 @@ export class FontCalculator implements IFontCalculator {
   getSizeOf(
     string: string,
     fontSize: number,
-    screenWidth: number
+    screenWidth: number,
   ): FontPixelSize {
     return {
       height: this.getHeightOf(string, fontSize, screenWidth),
@@ -111,14 +107,14 @@ export class FontCalculator implements IFontCalculator {
    */
   getIdealFontSizeForScreen(
     string: string,
-    screen: { width: number; height: number }
+    screen: { width: number; height: number },
   ): number {
     return this.checkFontForScreenWorker(
       string,
       screen,
       FontCalculator.MIN_FONT_SIZE,
       FontCalculator.MAX_FONT_SIZE,
-      FontCalculator.FONT_MARGIN
+      FontCalculator.FONT_MARGIN,
     );
   }
 
@@ -183,7 +179,7 @@ export class FontCalculator implements IFontCalculator {
     screen: { width: number; height: number },
     min: number,
     max: number,
-    delta: number
+    delta: number,
   ): number {
     let fontSize = Math.floor((max + min) / 2);
     let size = this.getSizeOf(string, fontSize, screen.width);
@@ -198,7 +194,7 @@ export class FontCalculator implements IFontCalculator {
         screen,
         min,
         fontSize,
-        delta
+        delta,
       );
     }
     // We still have some room, increase the font size
@@ -208,7 +204,7 @@ export class FontCalculator implements IFontCalculator {
         screen,
         fontSize,
         max,
-        delta
+        delta,
       );
     }
   }

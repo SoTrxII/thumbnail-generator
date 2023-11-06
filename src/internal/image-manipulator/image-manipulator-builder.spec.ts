@@ -3,8 +3,8 @@ import { resolve } from "path";
 import {
   Alignment,
   ImageManipulatorBuilder,
-} from "./image-manipulator-builder";
-import { IImageManipulatorBuilder } from "./image-manipulator-builder-api";
+} from "./image-manipulator-builder.js";
+import { IImageManipulatorBuilder } from "./image-manipulator-builder-api.js";
 import { tmpdir } from "os";
 
 describe("Image Manipulator Builder", () => {
@@ -20,14 +20,14 @@ describe("Image Manipulator Builder", () => {
   it("Should use a custom background if specified", async () => {
     await manipulator
       .withBackgroundImage(
-        resolve(__dirname, "../../../assets/images/background-blue-nature.jpg")
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
       )
       .buildAndRun();
   });
   it("Should be able to add borders to the image", async () => {
     await manipulator
       .withBackgroundImage(
-        resolve(__dirname, "../../../assets/images/background-blue-nature.jpg")
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
       )
       .withBorders(
         {
@@ -38,7 +38,7 @@ describe("Image Manipulator Builder", () => {
           height: "10+ih",
           width: "10+iw",
         },
-        "red"
+        "red",
       )
       .buildAndRun();
   });
@@ -48,7 +48,7 @@ describe("Image Manipulator Builder", () => {
         "Miaaaaaaaaaaou",
         { x: String(0), y: String(0) },
         100,
-        "#ffffff"
+        "#ffffff",
       )
       .buildAndRun();
   });
@@ -59,14 +59,14 @@ describe("Image Manipulator Builder", () => {
         { x: String(0), y: String(0) },
         99,
         "#ffffff",
-        "aaaaaaaaa"
+        "aaaaaaaaa",
       )
       .buildAndRun();
   });
   it("Should add an image to the frame if specified", async () => {
     await manipulator
       .withImageAt(
-        resolve(__dirname, "../../../assets/images/logo.png"),
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/logo.png"),
         {
           x: String(1280 / 2),
           y: String(720 / 2),
@@ -74,14 +74,14 @@ describe("Image Manipulator Builder", () => {
         {
           width: String(40),
           height: String(40),
-        }
+        },
       )
       .buildAndRun();
   });
   it("Should add a rounded image to the frame if specified", async () => {
     await manipulator
       .withImageAt(
-        resolve(__dirname, "../../../assets/images/gm_avatar.png"),
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/gm_avatar.png"),
         {
           x: String(1280 / 2),
           y: String(720 / 2),
@@ -90,29 +90,29 @@ describe("Image Manipulator Builder", () => {
           width: String(120),
           height: String(120),
         },
-        true
+        true,
       )
       .buildAndRun();
   });
   it("Should add a shadow to a square image", async () => {
     await manipulator.addShadowToImage(
-      resolve(__dirname, "../../../assets/images/gm_avatar.png"),
-      `${tmpdir()}/miaou.png`
+      resolve(import.meta.url.replace("file://", ""), "../../../assets/images/gm_avatar.png"),
+      `${tmpdir()}/miaou.png`,
     );
   });
   it("Should add a rounded image to a round image", async () => {
     await manipulator.addShadowToImage(
-      resolve(__dirname, "../../../assets/images/round_gm_avatar.png"),
-      `${tmpdir()}/miaou.png`
+      resolve(import.meta.url.replace("file://", ""), "../../../assets/images/round_gm_avatar.png"),
+      `${tmpdir()}/miaou.png`,
     );
   });
   it("Should add an image with a shadow to the frame if specified", async () => {
     await manipulator
       .withBackgroundImage(
-        resolve(__dirname, "../../../assets/images/background-blue-nature.jpg")
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
       )
       .withImageAt(
-        resolve(__dirname, "../../../assets/images/gm_avatar.png"),
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/gm_avatar.png"),
         {
           x: String(0 / 2),
           y: String(0 / 2),
@@ -122,28 +122,28 @@ describe("Image Manipulator Builder", () => {
           height: String(120),
         },
         true,
-        true
+        true,
       )
       .buildAndRun();
   });
   it("Background + Text", async () => {
     await manipulator
       .withBackgroundImage(
-        resolve(__dirname, "../../../assets/images/background-blue-nature.jpg")
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
       )
       .withScaling(String(1280), String(720))
       .withTextAt(
         "MIAOU",
         { x: String(1280 / 2), y: String(720 / 2) },
         60,
-        "white"
+        "white",
       )
       .buildAndRun();
   });
   it("Text with special characters", async () => {
     await manipulator
       .withBackgroundImage(
-        resolve(__dirname, "../../../assets/images/background-blue-nature.jpg")
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
       )
       .withScaling(String(1280), String(720))
       .withTextAligned(
@@ -151,14 +151,14 @@ describe("Image Manipulator Builder", () => {
         Alignment.TOP_CENTER,
         { x: 0, y: 40 },
         100,
-        "#ffffff"
+        "#ffffff",
       )
       .buildAndRun();
   });
   it("Should generate a composite frame", async () => {
     await manipulator
       .withBackgroundImage(
-        resolve(__dirname, "../../../assets/images/background-blue-nature.jpg")
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
       )
       .withScaling(String(1280), String(720))
       .withBorders(
@@ -170,10 +170,10 @@ describe("Image Manipulator Builder", () => {
           height: "10+ih",
           width: "10+iw",
         },
-        "blue"
+        "blue",
       )
       .withImageAt(
-        resolve(__dirname, "../../../assets/images/gm_avatar.png"),
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/gm_avatar.png"),
         {
           x: String(20),
           y: String(20),
@@ -182,10 +182,10 @@ describe("Image Manipulator Builder", () => {
           width: String(120),
           height: String(120),
         },
-        true
+        true,
       )
       .withImageAt(
-        resolve(__dirname, "../../../assets/images/logo.png"),
+        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/logo.png"),
         {
           x: String(20),
           y: "720-overlay_h - 20",
@@ -193,21 +193,21 @@ describe("Image Manipulator Builder", () => {
         {
           width: String(120),
           height: String(120),
-        }
+        },
       )
       .withTextAligned(
         "MIAOU",
         Alignment.TOP_CENTER,
         { x: 0, y: 40 },
         100,
-        "#ffffff"
+        "#ffffff",
       )
       .withTextAligned(
         "\n\nChicken attack",
         Alignment.BOTTOM_CENTER,
         { x: 0, y: 30 },
         50,
-        "#ffffff"
+        "#ffffff",
       )
       .withTextAligned("#1", Alignment.TOP_RIGHT, { x: 0, y: 0 }, 48, "#ffffff")
       .buildAndRun(`${tmpdir()}/meh.png`);

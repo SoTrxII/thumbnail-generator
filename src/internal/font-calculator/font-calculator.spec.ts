@@ -1,10 +1,10 @@
 import "reflect-metadata";
-import { FontCalculator } from "./font-calculator";
+import { FontCalculator } from "./font-calculator.js";
 import { join } from "path";
 
 const fontLocation = join(
-  __dirname,
-  "../../../assets/fonts/liberation-mono/LiberationMono-Regular.ttf"
+  import.meta.url.replace("file://", ""),
+  "../../../assets/fonts/liberation-mono/LiberationMono-Regular.ttf",
 );
 describe("Font calculator", () => {
   describe("Font loading", () => {
@@ -12,7 +12,7 @@ describe("Font calculator", () => {
       const calculator = new FontCalculator();
       calculator.font = fontLocation;
       expect(() =>
-        calculator.getWidthOf("L'horizon des évènements", 60)
+        calculator.getWidthOf("L'horizon des évènements", 60),
       ).not.toThrow();
     });
   });
@@ -40,7 +40,7 @@ describe("Font calculator", () => {
       const width = calculator.getNbLinesOf(
         "L'horizon des évènements",
         60,
-        120
+        120,
       );
       // This is gigantic
       expect(width).toBeGreaterThan(15);
@@ -50,7 +50,7 @@ describe("Font calculator", () => {
       const width = calculator.getHeightOf(
         "L'horizon des évènements",
         60,
-        1280
+        1280,
       );
       expect(width).toBeGreaterThan(225);
       console.log(width);
@@ -59,7 +59,7 @@ describe("Font calculator", () => {
     it("Should calculate a font size for a specified screen size", () => {
       const fontSize = calculator.getIdealFontSizeForScreen(
         "L'horizon des évènements",
-        { width: 960, height: 360 }
+        { width: 960, height: 360 },
       );
       //const width = calculator.getHeightOf("L'horizon des évènements", 60, 1280);
       //expect(width).toBeGreaterThan(225);

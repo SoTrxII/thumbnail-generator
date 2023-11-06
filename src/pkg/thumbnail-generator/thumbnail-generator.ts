@@ -1,16 +1,14 @@
-import { inject, injectable, multiInject } from "inversify";
-import { TYPES } from "../../types";
-import { ThumbnailPreset } from "../../internal/presets/thumbnail-preset-api";
+import { injectable, multiInject } from "inversify";
+import { TYPES } from "../../types.js";
+import { ThumbnailPreset } from "../../internal/presets/thumbnail-preset-api.js";
 import { ValidationError } from "jsonschema";
 import imagemin from "imagemin";
 import imageminPngquant from "imagemin-pngquant";
-import { unlink, writeFile } from "fs/promises";
+import { stat, unlink, writeFile } from "fs/promises";
 import { resolve } from "path";
 import { tmpdir } from "os";
 import { hrtime } from "process";
-import { stat } from "fs/promises";
-import { IThumbnailGenerator } from "./thumbnail-generator-api";
-import { IObjectStore } from "../../internal/object-store/objet-store-api";
+import { IThumbnailGenerator } from "./thumbnail-generator-api.js";
 
 export class ThumbnailSchemaError extends Error {
   constructor(private errors: ValidationError[]) {
@@ -44,7 +42,7 @@ export interface GenerationOptions {
 export class ThumbnailGenerator implements IThumbnailGenerator {
   private static readonly DEFAULT_OPTIONS: GenerationOptions = {
     // Path to font files
-    fontDir: resolve(__dirname, "../../../assets/fonts"),
+    fontDir: resolve(import.meta.url.replace("file://", ""), "../../../assets/fonts"),
     defaultFontPath: "liberation-mono/LiberationMono-Regular.ttf",
     size: { width: 1280, height: 720 },
     forceOptimize: false,
@@ -92,11 +90,13 @@ export class ThumbnailGenerator implements IThumbnailGenerator {
    * @param outPath
    */
   async optimizeImage(inPath: string, outPath: string): Promise<void> {
+
     const files = await imagemin([inPath], {
       // Imagemin uses globby, which expect unix format. Setting glob to true will break on Windows
       // see https://github.com/imagemin/imagemin/issues/352
       glob: false,
       plugins: [
+        // @ts-ignore
         imageminPngquant({
           quality: [0.5, 0.6],
         }),

@@ -1,11 +1,14 @@
 import { injectable } from "inversify";
 import { readFile } from "fs/promises";
-import IClientBinding from "@dapr/dapr/interfaces/Client/IClientBinding";
-import { IObjectStoreProxy } from "./objet-store-api";
+import { IObjectStoreProxy } from "./objet-store-api.js";
+import * as IClientBinding from "@dapr/dapr/interfaces/Client/IClientBinding.js"
 
 @injectable()
 export class DaprObjectStorageAdapter implements IObjectStoreProxy {
-  constructor(private client: IClientBinding, private objStoreName: string) {}
+  constructor(
+    private client: IClientBinding.default,
+    private objStoreName: string,
+  ) {}
 
   /**
    * Create a file on the chosen backend
@@ -17,7 +20,7 @@ export class DaprObjectStorageAdapter implements IObjectStoreProxy {
    */
   async create(
     filePath: string,
-    key: string
+    key: string,
   ): Promise<Record<string, unknown>> {
     const b64 = await readFile(filePath, { encoding: "base64" });
     return (await this.client.send(this.objStoreName, "create", b64, {
