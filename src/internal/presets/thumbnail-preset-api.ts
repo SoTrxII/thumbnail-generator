@@ -5,8 +5,6 @@ import { GenerationOptions } from "../../pkg/thumbnail-generator/thumbnail-gener
 export abstract class ThumbnailPreset {
   protected options: GenerationOptions;
 
-  protected constructor() {}
-
   // Preset name
   public abstract get name(): string;
 

@@ -16,8 +16,9 @@
     "sourceMap": true,
     //"inlineSources": true,
     "declaration": false,
-    "module": "commonjs",
-    "target": "es2017",
+    "module": "CommonJS",
+    "target": "es2022",
+    "esModuleInterop": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -25,7 +26,6 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "types": [
-      "reflect-metadata",
       "node",
       "jest"
     ],

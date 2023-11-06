@@ -1,14 +1,16 @@
-import { injectable, multiInject } from "inversify";
+import { inject, injectable, multiInject } from "inversify";
 import { TYPES } from "../../types";
 import { ThumbnailPreset } from "../../internal/presets/thumbnail-preset-api";
 import { ValidationError } from "jsonschema";
-import * as imagemin from "imagemin";
+import imagemin from "imagemin";
 import imageminPngquant from "imagemin-pngquant";
 import { unlink, writeFile } from "fs/promises";
 import { resolve } from "path";
 import { tmpdir } from "os";
 import { hrtime } from "process";
+import { stat } from "fs/promises";
 import { IThumbnailGenerator } from "./thumbnail-generator-api";
+import { IObjectStore } from "../../internal/object-store/objet-store-api";
 
 export class ThumbnailSchemaError extends Error {
   constructor(private errors: ValidationError[]) {
@@ -35,7 +37,7 @@ export interface GenerationOptions {
   /** Thumbnail size. Default 720p*/
   size: { width: number; height: number };
   /** Whether to optimize the resulting image, which can be quite big at first*/
-  optimizeImage: boolean;
+  forceOptimize: boolean;
 }
 
 @injectable()
@@ -45,11 +47,13 @@ export class ThumbnailGenerator implements IThumbnailGenerator {
     fontDir: resolve(__dirname, "../../../assets/fonts"),
     defaultFontPath: "liberation-mono/LiberationMono-Regular.ttf",
     size: { width: 1280, height: 720 },
-    optimizeImage: true,
+    forceOptimize: false,
   };
 
+  private static readonly THUMB_MAX_SIZE = 2 * 1024 * 1024;
+
   constructor(
-    @multiInject(TYPES.ThumbnailPreset) private presets: ThumbnailPreset[]
+    @multiInject(TYPES.ThumbnailPreset) private presets: ThumbnailPreset[],
   ) {}
 
   /**
@@ -62,15 +66,18 @@ export class ThumbnailGenerator implements IThumbnailGenerator {
   async buildWithPreset(
     presetName: string,
     args: Record<string, any>,
-    options: Partial<GenerationOptions>
+    options: Partial<GenerationOptions>,
   ): Promise<string> {
     const opt = Object.assign(ThumbnailGenerator.DEFAULT_OPTIONS, options);
     const preset = this.presets.find((p) => p.name === presetName);
     if (preset === undefined)
       throw new InvalidPresetError(`preset ${presetName} doesn't exists !`);
     let imagePath = await preset.run(args, opt);
-
-    if (options.optimizeImage) {
+    const fileStat = await stat(imagePath);
+    if (
+      options.forceOptimize ||
+      fileStat.size >= ThumbnailGenerator.THUMB_MAX_SIZE
+    ) {
       const optiPath = `${tmpdir()}/result_image_${hrtime().join("_")}`;
       await this.optimizeImage(imagePath, optiPath);
       await unlink(imagePath);

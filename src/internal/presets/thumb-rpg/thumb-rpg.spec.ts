@@ -51,7 +51,7 @@ describe("Thumb RPG", () => {
       logoUrl: DEFAULT_IMG,
     };
     const image = await thumbRPG.build(data, {
-      optimizeImage: false,
+      forceOptimize: false,
       size: { width: 0, height: 0 },
       defaultFontPath: "dd",
       fontDir: "dd",

@@ -13,7 +13,7 @@ import { IImageManipulatorBuilder } from "../../image-manipulator/image-manipula
 import { IImageDownloader } from "../../image-downloader/image-downloader-api";
 import { join } from "path";
 import { Alignment } from "../../image-manipulator/image-manipulator-builder";
-import Vibrant = require("node-vibrant");
+import Vibrant from "node-vibrant";
 
 interface ThumbRpgArgs {
   // Game Master's Avatar
@@ -52,7 +52,7 @@ export class ThumbRpg extends ThumbnailPreset {
     @inject(TYPES.FontCalculator) protected fontCalculator: IFontCalculator,
     @inject(TYPES.ImageManipulatorBuilder)
     protected manipulator: IImageManipulatorBuilder,
-    @inject(TYPES.ImageDownloader) protected downloader: IImageDownloader
+    @inject(TYPES.ImageDownloader) protected downloader: IImageDownloader,
   ) {
     super();
   }
@@ -63,7 +63,7 @@ export class ThumbRpg extends ThumbnailPreset {
 
   async build(
     args: Record<string, any>,
-    options?: Partial<GenerationOptions>
+    options?: Partial<GenerationOptions>,
   ): Promise<string> {
     // This is a test backdoor
     if (options !== undefined) this.options = options as GenerationOptions;
@@ -71,7 +71,7 @@ export class ThumbRpg extends ThumbnailPreset {
     // Will throw on any validation error
     this.validateArgs(fusedArgs);
     this.initializeFont(
-      join(this.options.fontDir, this.options.defaultFontPath)
+      join(this.options.fontDir, this.options.defaultFontPath),
     );
     // Validation is OK, casting is safe
     return this.buildThumbnail(fusedArgs as ThumbRpgArgs);
@@ -106,34 +106,44 @@ export class ThumbRpg extends ThumbnailPreset {
       this.scaleBoundaries(
         ThumbRpg.BOUNDARIES.subtitle,
         ThumbRpg.DEFAULT_OPTIONS.size,
-        this.options.size
-      )
+        this.options.size,
+      ),
     );
 
     const titleSize = this.scaleSize(
       20,
       ThumbRpg.DEFAULT_OPTIONS.size,
-      this.options.size
+      this.options.size,
     );
     const episodeIndexSize = this.scaleSize(
       40,
       ThumbRpg.DEFAULT_OPTIONS.size,
-      this.options.size
+      this.options.size,
     );
+    console.log(`Args : ${JSON.stringify(args)}`);
+    // Also download gms images and log
     // Download the background image from its url and get the dominant colors for the borders
-    const [colorPalette, tempBgImage] = await Promise.all([
-      Vibrant.from(args.backgroundUrl).getPalette(),
-      this.downloader.download(args.backgroundUrl),
-    ]);
+    const bgPath = await this.downloader.download(args.backgroundUrl);
+    const colorPlatte = await Vibrant.from(bgPath).getPalette();
 
     // Also download gms images and logo
-    const gmsImages = await Promise.all(
-      args.gmsAvatarUrl.map(async (a) => await this.downloader.download(a))
+    const gmsImgProm = await Promise.allSettled(
+      args.gmsAvatarUrl.map(async (a) => await this.downloader.download(a)),
     );
+    gmsImgProm
+      .filter((p) => p.status === "rejected")
+      .forEach((p: PromiseRejectedResult) => {
+        console.error(`Error while downloading gms avatar : ${p.reason}`);
+      });
+
+    const gmsImages = gmsImgProm
+      .filter((p) => p.status === "fulfilled")
+      .map((p: PromiseFulfilledResult<string>) => p.value);
 
     const logoPath = await this.downloader.download(args.logoUrl);
 
-    this.setBackground(tempBgImage, colorPalette.LightVibrant.getHex())
+    console.log(`Logo : ${logoPath}`);
+    this.setBackground(bgPath, colorPlatte.LightVibrant.hex)
       .setTitle(args.title, titleSize, "#ffffff")
       .setEpisodeNumber(args.episodeIndex, episodeIndexSize, "#ffffff")
       .setSubTitle(args.episodeTitle, subtitleFontSize, "#ffffff")
@@ -165,7 +175,7 @@ export class ThumbRpg extends ThumbnailPreset {
       size,
       color,
       this.fontCalculator.familyName,
-      this.options.fontDir
+      this.options.fontDir,
     );
     return this;
   }
@@ -185,7 +195,7 @@ export class ThumbRpg extends ThumbnailPreset {
       size,
       color,
       this.fontCalculator.familyName,
-      this.options.fontDir
+      this.options.fontDir,
     );
     return this;
   }
@@ -205,7 +215,7 @@ export class ThumbRpg extends ThumbnailPreset {
       size,
       color,
       this.fontCalculator.familyName,
-      this.options.fontDir
+      this.options.fontDir,
     );
     return this;
   }
@@ -221,7 +231,7 @@ export class ThumbRpg extends ThumbnailPreset {
       //Scaling the image first
       .withScaling(
         String(ThumbRpg.DEFAULT_OPTIONS.size.width),
-        String(ThumbRpg.DEFAULT_OPTIONS.size.height)
+        String(ThumbRpg.DEFAULT_OPTIONS.size.height),
       )
       .withBorders(
         {
@@ -232,12 +242,12 @@ export class ThumbRpg extends ThumbnailPreset {
           height: "10+ih",
           width: "10+iw",
         },
-        borderColor
+        borderColor,
       )
       //Scaling with added border
       .withScaling(
         String(ThumbRpg.DEFAULT_OPTIONS.size.width),
-        String(ThumbRpg.DEFAULT_OPTIONS.size.height)
+        String(ThumbRpg.DEFAULT_OPTIONS.size.height),
       );
 
     return this;
@@ -263,7 +273,7 @@ export class ThumbRpg extends ThumbnailPreset {
           height: String(height),
         },
         true,
-        true
+        true,
       );
     });
     return this;
@@ -284,7 +294,7 @@ export class ThumbRpg extends ThumbnailPreset {
       {
         width: String(120),
         height: String(120),
-      }
+      },
     );
     return this;
   }

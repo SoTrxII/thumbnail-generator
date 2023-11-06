@@ -27,7 +27,6 @@
     }
   },
   "required": [
-    "playersAvatarUrls",
     "gmsAvatarUrl",
     "title",
     "episodeTitle",

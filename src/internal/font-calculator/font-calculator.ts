@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import { Font } from "fontkit";
 import { FontPixelSize, IFontCalculator } from "./font-calculator-api";
-import fontkit = require("fontkit");
+import fontkit from "fontkit";
 
 @injectable()
 export class FontCalculator implements IFontCalculator {

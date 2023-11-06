@@ -32,7 +32,7 @@ describe("Thumb RPG integration testing", () => {
       size: { width: 1920, height: 1080 },
       fontDir: resolve(__dirname, "../../../../assets/fonts/"),
       defaultFontPath: "liberation-mono/LiberationMono-Regular.ttf",
-      optimizeImage: false,
+      forceOptimize: false,
     });
   }, 20000);
 });

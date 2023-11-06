@@ -1,8 +1,8 @@
 import { injectable } from "inversify";
-import * as ffmpeg from "fluent-ffmpeg";
+import ffmpeg from "fluent-ffmpeg";
 import { FfmpegCommand, FilterSpecification } from "fluent-ffmpeg";
 import { tmpdir } from "os";
-import * as sharp from "sharp";
+import sharp from "sharp";
 import { unlinkSync, writeFileSync } from "fs";
 import { hrtime } from "process";
 import {
@@ -201,7 +201,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
    * @param outFile output file path
    */
   async addShadowToImage(inFile: string, outFile: string): Promise<void> {
-    const stream = await sharp(inFile);
+    const stream = sharp(inFile);
     const { width, height } = await stream.metadata();
     const SHADOW_MARGIN = 40;
     const SHADOW_BLUR = 15;

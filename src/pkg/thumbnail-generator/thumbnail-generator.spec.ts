@@ -19,7 +19,7 @@ describe("Thumbnail-generator", () => {
 
   it("Should run ok on a registered template", async () => {
     await thg.buildWithPreset(mockPreset.name, undefined, {
-      optimizeImage: false,
+      forceOptimize: false,
     });
   });
 
