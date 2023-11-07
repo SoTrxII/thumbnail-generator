@@ -76,6 +76,7 @@ export class ThumbnailGenerator implements IThumbnailGenerator {
       options.forceOptimize ||
       fileStat.size >= ThumbnailGenerator.THUMB_MAX_SIZE
     ) {
+      console.log("Optimizing image " + imagePath);
       const optiPath = `${tmpdir()}/result_image_${hrtime().join("_")}`;
       await this.optimizeImage(imagePath, optiPath);
       await unlink(imagePath);

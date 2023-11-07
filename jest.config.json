@@ -1,9 +1,7 @@
 {
-  "preset": "ts-jest",
+  "preset": "ts-jest/presets/default-esm",
   "testEnvironment": "node",
-  "transform": {
-    "^.+\\.tsx?$": "ts-jest"
-  },
+  "extensionsToTreatAsEsm": [".ts"],
   "moduleNameMapper": {
     "#core/(.*)": "<rootDir>/dist/$1"
   },
