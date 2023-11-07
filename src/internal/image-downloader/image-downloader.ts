@@ -28,8 +28,11 @@ export class ImageDownloader implements IImageDownloader {
       path,
       async [Symbol.asyncDispose]() {
         console.log("disposing of image " + path);
-        // TODO :: Handle error
-        await unlink(path);
+        try {
+          await unlink(path);
+        } catch (e) {
+          console.warn("Couldn't delete image " + path);
+        }
       },
     };
   }
