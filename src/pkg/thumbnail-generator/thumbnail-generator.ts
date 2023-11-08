@@ -1,11 +1,9 @@
 import { injectable, multiInject } from "inversify";
 import { TYPES } from "../../types.js";
 import { ThumbnailPreset } from "../../internal/presets/thumbnail-preset-api.js";
-import { ValidationError } from "jsonschema";
 import imagemin from "imagemin";
 import imageminPngquant from "imagemin-pngquant";
 import { stat, unlink, writeFile } from "fs/promises";
-import { resolve } from "path";
 import { tmpdir } from "os";
 import { hrtime } from "process";
 import {
@@ -14,16 +12,14 @@ import {
   IThumbnailGenerator,
   OptimizationError,
 } from "./thumbnail-generator-api.js";
+import { fontPath, FontResource, getFont } from "../../utils/resources.js";
 
 @injectable()
 export class ThumbnailGenerator implements IThumbnailGenerator {
   private static readonly DEFAULT_OPTIONS: GenerationOptions = {
     // Path to font files
-    fontDir: resolve(
-      import.meta.url.replace("file://", ""),
-      "../../../assets/fonts",
-    ),
-    defaultFontPath: "liberation-mono/LiberationMono-Regular.ttf",
+    fontDir: fontPath,
+    defaultFontPath: getFont(FontResource.LIBERATION_MONO),
     size: { width: 1280, height: 720 },
     forceOptimize: false,
   };

@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { FontCalculator } from "./font-calculator.js";
-import { FontResource, getFont } from "../../test-utils/resources.js";
+import { FontResource, getFont } from "../../utils/resources.js";
 
 describe("Font calculator", () => {
   const fontLocation = getFont(FontResource.LIBERATION_MONO);

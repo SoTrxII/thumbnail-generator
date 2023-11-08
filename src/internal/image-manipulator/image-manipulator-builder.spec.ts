@@ -5,7 +5,7 @@ import {
 } from "./image-manipulator-builder.js";
 import { IImageManipulatorBuilder } from "./image-manipulator-builder-api.js";
 import { tmpdir } from "os";
-import { getImg, ImageResource } from "../../test-utils/resources.js";
+import { getImg, ImageResource } from "../../utils/resources.js";
 
 describe("Image Manipulator Builder", () => {
   let manipulator: IImageManipulatorBuilder;

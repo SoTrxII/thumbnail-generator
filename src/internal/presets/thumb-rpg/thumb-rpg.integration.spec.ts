@@ -3,7 +3,7 @@ import { container } from "../../../inversify.config.js";
 import { TYPES } from "../../../types.js";
 import { ThumbnailPreset } from "../thumbnail-preset-api.js";
 import { ThumbRpg } from "./thumb-rpg.js";
-import { fontPath, FontResource } from "../../../test-utils/resources.js";
+import { fontPath, FontResource } from "../../../utils/resources.js";
 
 const DEFAULT_IMG =
   "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg";
