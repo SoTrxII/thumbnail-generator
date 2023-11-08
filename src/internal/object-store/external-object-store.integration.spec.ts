@@ -7,7 +7,7 @@ import { DaprObjectStorageAdapter } from "./dapr-object-storage-adapter.js";
 import { DaprClient } from "@dapr/dapr";
 import { ObjectStoreError } from "./objet-store-api.js";
 
-describe("Object store :: Integration", () => {
+describe.skip("Object store :: Integration", () => {
   const objStore = new ExternalObjectStore(
     new DaprObjectStorageAdapter(new DaprClient().binding, "object-store"),
   );

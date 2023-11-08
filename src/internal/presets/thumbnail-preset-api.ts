@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { GenerationOptions } from "../../pkg/thumbnail-generator/thumbnail-generator.js";
+import { GenerationOptions } from "../../pkg/thumbnail-generator/thumbnail-generator-api.js";
 
 @injectable()
 export abstract class ThumbnailPreset {

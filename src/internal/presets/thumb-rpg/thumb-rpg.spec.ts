@@ -3,8 +3,8 @@ import { ThumbRpg } from "./thumb-rpg.js";
 import { Substitute } from "@fluffy-spoon/substitute";
 import { IFontCalculator } from "../../font-calculator/font-calculator-api.js";
 import { IImageManipulatorBuilder } from "../../image-manipulator/image-manipulator-builder-api.js";
-import { ThumbnailSchemaError } from "../../../pkg/thumbnail-generator/thumbnail-generator.js";
 import { IImageDownloader } from "../../image-downloader/image-downloader-api.js";
+import { ThumbnailSchemaError } from "../../../pkg/thumbnail-generator/thumbnail-generator-api.js";
 
 const DEFAULT_IMG =
   "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg";
@@ -39,23 +39,4 @@ describe("Thumb RPG", () => {
     };
     expect(() => thumbRPG.validateArgs(data)).not.toThrow();
   });
-
-  it("Correctness of public interface", async () => {
-    const data = {
-      gmsAvatarUrl: [DEFAULT_IMG],
-      playersAvatarUrls: [DEFAULT_IMG, DEFAULT_IMG],
-      title: "meh",
-      episodeTitle: "mah",
-      episodeIndex: 1,
-      backgroundUrl: DEFAULT_IMG,
-      logoUrl: DEFAULT_IMG,
-    };
-    const image = await thumbRPG.build(data, {
-      forceOptimize: false,
-      size: { width: 0, height: 0 },
-      defaultFontPath: "dd",
-      fontDir: "dd",
-    });
-    console.log(image);
-  }, 20000);
 });

@@ -1,11 +1,11 @@
 import "reflect-metadata";
-import { resolve } from "path";
 import {
   Alignment,
   ImageManipulatorBuilder,
 } from "./image-manipulator-builder.js";
 import { IImageManipulatorBuilder } from "./image-manipulator-builder-api.js";
 import { tmpdir } from "os";
+import { getImg, ImageResource } from "../../test-utils/resources.js";
 
 describe("Image Manipulator Builder", () => {
   let manipulator: IImageManipulatorBuilder;
@@ -19,16 +19,12 @@ describe("Image Manipulator Builder", () => {
   });
   it("Should use a custom background if specified", async () => {
     await manipulator
-      .withBackgroundImage(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
-      )
+      .withBackgroundImage(getImg(ImageResource.BACKGROUND_BLUE_NATURE))
       .buildAndRun();
   });
   it("Should be able to add borders to the image", async () => {
     await manipulator
-      .withBackgroundImage(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
-      )
+      .withBackgroundImage(getImg(ImageResource.BACKGROUND_BLUE_NATURE))
       .withBorders(
         {
           x: "5",
@@ -66,7 +62,7 @@ describe("Image Manipulator Builder", () => {
   it("Should add an image to the frame if specified", async () => {
     await manipulator
       .withImageAt(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/logo.png"),
+        getImg(ImageResource.LOGO),
         {
           x: String(1280 / 2),
           y: String(720 / 2),
@@ -81,7 +77,7 @@ describe("Image Manipulator Builder", () => {
   it("Should add a rounded image to the frame if specified", async () => {
     await manipulator
       .withImageAt(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/gm_avatar.png"),
+        getImg(ImageResource.GM_AVATAR),
         {
           x: String(1280 / 2),
           y: String(720 / 2),
@@ -96,23 +92,21 @@ describe("Image Manipulator Builder", () => {
   });
   it("Should add a shadow to a square image", async () => {
     await manipulator.addShadowToImage(
-      resolve(import.meta.url.replace("file://", ""), "../../../assets/images/gm_avatar.png"),
+      getImg(ImageResource.GM_AVATAR),
       `${tmpdir()}/miaou.png`,
     );
   });
   it("Should add a rounded image to a round image", async () => {
     await manipulator.addShadowToImage(
-      resolve(import.meta.url.replace("file://", ""), "../../../assets/images/round_gm_avatar.png"),
+      getImg(ImageResource.ROUND_GM_AVATAR),
       `${tmpdir()}/miaou.png`,
     );
   });
   it("Should add an image with a shadow to the frame if specified", async () => {
     await manipulator
-      .withBackgroundImage(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
-      )
+      .withBackgroundImage(getImg(ImageResource.BACKGROUND_BLUE_NATURE))
       .withImageAt(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/gm_avatar.png"),
+        getImg(ImageResource.GM_AVATAR),
         {
           x: String(0 / 2),
           y: String(0 / 2),
@@ -128,9 +122,7 @@ describe("Image Manipulator Builder", () => {
   });
   it("Background + Text", async () => {
     await manipulator
-      .withBackgroundImage(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
-      )
+      .withBackgroundImage(getImg(ImageResource.BACKGROUND_BLUE_NATURE))
       .withScaling(String(1280), String(720))
       .withTextAt(
         "MIAOU",
@@ -142,9 +134,7 @@ describe("Image Manipulator Builder", () => {
   });
   it("Text with special characters", async () => {
     await manipulator
-      .withBackgroundImage(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
-      )
+      .withBackgroundImage(getImg(ImageResource.BACKGROUND_BLUE_NATURE))
       .withScaling(String(1280), String(720))
       .withTextAligned(
         "MIœAOU",
@@ -157,9 +147,7 @@ describe("Image Manipulator Builder", () => {
   });
   it("Should generate a composite frame", async () => {
     await manipulator
-      .withBackgroundImage(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/background-blue-nature.jpg"),
-      )
+      .withBackgroundImage(getImg(ImageResource.BACKGROUND_BLUE_NATURE))
       .withScaling(String(1280), String(720))
       .withBorders(
         {
@@ -173,7 +161,7 @@ describe("Image Manipulator Builder", () => {
         "blue",
       )
       .withImageAt(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/gm_avatar.png"),
+        getImg(ImageResource.GM_AVATAR),
         {
           x: String(20),
           y: String(20),
@@ -185,7 +173,7 @@ describe("Image Manipulator Builder", () => {
         true,
       )
       .withImageAt(
-        resolve(import.meta.url.replace("file://", ""), "../../../assets/images/logo.png"),
+        getImg(ImageResource.LOGO),
         {
           x: String(20),
           y: "720-overlay_h - 20",

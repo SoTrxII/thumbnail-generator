@@ -2,10 +2,6 @@ import { inject, injectable } from "inversify";
 import { ThumbnailPreset } from "../thumbnail-preset-api.js";
 import { validate } from "jsonschema";
 import schema from "./schema.json" assert { type: "json" };
-import {
-  GenerationOptions,
-  ThumbnailSchemaError,
-} from "../../../pkg/thumbnail-generator/thumbnail-generator.js";
 import { tmpdir } from "os";
 import { TYPES } from "../../../types.js";
 import { IFontCalculator } from "../../font-calculator/font-calculator-api.js";
@@ -17,6 +13,10 @@ import {
 import { join } from "path";
 import { Alignment } from "../../image-manipulator/image-manipulator-builder.js";
 import Vibrant from "node-vibrant";
+import {
+  GenerationOptions,
+  ThumbnailSchemaError,
+} from "../../../pkg/thumbnail-generator/thumbnail-generator-api.js";
 import("disposablestack/auto");
 
 interface ThumbRpgArgs {

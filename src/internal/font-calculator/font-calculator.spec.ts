@@ -1,12 +1,9 @@
 import "reflect-metadata";
 import { FontCalculator } from "./font-calculator.js";
-import { join } from "path";
+import { FontResource, getFont } from "../../test-utils/resources.js";
 
-const fontLocation = join(
-  import.meta.url.replace("file://", ""),
-  "../../../assets/fonts/liberation-mono/LiberationMono-Regular.ttf",
-);
 describe("Font calculator", () => {
+  const fontLocation = getFont(FontResource.LIBERATION_MONO);
   describe("Font loading", () => {
     it("Should load a font from a path", () => {
       const calculator = new FontCalculator();

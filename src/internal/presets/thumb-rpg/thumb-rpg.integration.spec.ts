@@ -3,7 +3,7 @@ import { container } from "../../../inversify.config.js";
 import { TYPES } from "../../../types.js";
 import { ThumbnailPreset } from "../thumbnail-preset-api.js";
 import { ThumbRpg } from "./thumb-rpg.js";
-import { resolve } from "path";
+import { fontPath, FontResource } from "../../../test-utils/resources.js";
 
 const DEFAULT_IMG =
   "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg";
@@ -30,8 +30,8 @@ describe("Thumb RPG integration testing", () => {
     };
     await thumbRPG.build(data, {
       size: { width: 1920, height: 1080 },
-      fontDir: resolve(import.meta.url.replace("file://", ""), "../../../../assets/fonts/"),
-      defaultFontPath: "liberation-mono/LiberationMono-Regular.ttf",
+      fontDir: fontPath,
+      defaultFontPath: FontResource.LIBERATION_MONO,
       forceOptimize: false,
     });
   }, 20000);

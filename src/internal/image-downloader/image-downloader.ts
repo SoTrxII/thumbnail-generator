@@ -3,10 +3,12 @@ import { tmpdir } from "node:os";
 import { createWriteStream } from "node:fs";
 import { unlink } from "node:fs/promises";
 import fetch from "node-fetch";
-import { IImageDownloader, Image } from "./image-downloader-api.js";
+import {
+  IImageDownloader,
+  Image,
+  ImageDownloaderError,
+} from "./image-downloader-api.js";
 import { pipeline } from "node:stream/promises";
-
-export class ImageDownloaderError extends Error {}
 
 @injectable()
 export class ImageDownloader implements IImageDownloader {
