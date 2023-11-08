@@ -123,12 +123,12 @@ export class ThumbRpg extends ThumbnailPreset {
       ThumbRpg.DEFAULT_OPTIONS.size,
       this.options.size,
     );
+    await using stack = new AsyncDisposableStack();
     // Also download gms images and log
     // Download the background image from its url and get the dominant colors for the borders
     await using bg = await this.downloader.download(args.backgroundUrl);
     const colorPlatte = await Vibrant.from(bg.path).getPalette();
 
-    await using stack = new AsyncDisposableStack();
     const aRes = await Promise.allSettled(
       args.gmsAvatarUrl.map((a) => this.downloader.download(a)),
     );

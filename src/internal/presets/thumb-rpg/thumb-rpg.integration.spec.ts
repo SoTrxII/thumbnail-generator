@@ -1,9 +1,10 @@
 import "reflect-metadata";
-import { container } from "../../../inversify.config.js";
-import { TYPES } from "../../../types.js";
-import { ThumbnailPreset } from "../thumbnail-preset-api.js";
 import { ThumbRpg } from "./thumb-rpg.js";
 import { fontPath, FontResource } from "../../../utils/resources.js";
+import { FontCalculator } from "../../font-calculator/font-calculator.js";
+import { ImageManipulatorBuilder } from "../../image-manipulator/image-manipulator-builder.js";
+import { plainTextLogger } from "../../logger/logger-plain-text.js";
+import { ImageDownloader } from "../../image-downloader/image-downloader.js";
 
 const DEFAULT_IMG =
   "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg";
@@ -11,11 +12,12 @@ describe("Thumb RPG integration testing", () => {
   let thumbRPG: ThumbRpg;
   beforeAll(() => {
     // Only to retrieve the preset name
-    const mockTh = new ThumbRpg(undefined, undefined, undefined);
-    // Resolve the value in the container with all its dependencies
-    thumbRPG = container
-      .getAll<ThumbnailPreset>(TYPES.ThumbnailPreset)
-      .find((preset) => preset.name == mockTh.name) as unknown as ThumbRpg;
+    thumbRPG = new ThumbRpg(
+      new FontCalculator(),
+      new ImageManipulatorBuilder(plainTextLogger),
+      new ImageDownloader(),
+      plainTextLogger,
+    );
   });
   it("Must create a correct thumbnail", async () => {
     const data = {

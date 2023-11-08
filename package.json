@@ -13,7 +13,7 @@
     "start:dev": "npm run build && node dist/server.js",
     "start:dapr": "dapr run --app-id thumbnail-generator --app-port 50051 --app-protocol grpc --resources-path ./dapr/components -- npm run start:dev",
     "proto": "npx grpc_tools_node_protoc --proto_path=./src/proto --js_out=\"import_style=commonjs:./src/proto/\"  --ts_out=grpc_js:./src/proto --grpc_out=grpc_js:./src/proto  src/proto/thumbnail.proto",
-    "build": "tsc && npx shx cp -r package.json assets dist/"
+    "build": "tsc && npx shx cp -r package.json src/assets dist/"
   },
   "dependencies": {
     "@dapr/dapr": "^3.2.0",

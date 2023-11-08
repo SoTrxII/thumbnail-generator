@@ -23,7 +23,7 @@ The following request
 }
 ```
 Would lead to the following result:
-![](assets/images/sample-rpg-thumbnail.png)
+![](src/assets/images/sample-rpg-thumbnail.png)
 
 ## Deploy
 Using faas-cli:

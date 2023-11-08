@@ -6,12 +6,13 @@ import {
 import { IImageManipulatorBuilder } from "./image-manipulator-builder-api.js";
 import { tmpdir } from "os";
 import { getImg, ImageResource } from "../../utils/resources.js";
+import { plainTextLogger } from "../logger/logger-plain-text.js";
 
 describe("Image Manipulator Builder", () => {
   let manipulator: IImageManipulatorBuilder;
 
   beforeEach(() => {
-    manipulator = new ImageManipulatorBuilder();
+    manipulator = new ImageManipulatorBuilder(plainTextLogger);
   });
 
   it("Should be able to default to a black background", async () => {

@@ -5,6 +5,7 @@ import { IFontCalculator } from "../../font-calculator/font-calculator-api.js";
 import { IImageManipulatorBuilder } from "../../image-manipulator/image-manipulator-builder-api.js";
 import { IImageDownloader } from "../../image-downloader/image-downloader-api.js";
 import { ThumbnailSchemaError } from "../../../pkg/thumbnail-generator/thumbnail-generator-api.js";
+import { plainTextLogger } from "../../logger/logger-plain-text.js";
 
 const DEFAULT_IMG =
   "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg";
@@ -13,6 +14,7 @@ describe("Thumb RPG", () => {
     Substitute.for<IFontCalculator>(),
     Substitute.for<IImageManipulatorBuilder>(),
     Substitute.for<IImageDownloader>(),
+    plainTextLogger,
   );
   it("Must panic on wrong schema", () => {
     const data = {
