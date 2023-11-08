@@ -10,15 +10,15 @@ describe("Thumbnail-generator", () => {
 
   it("KO on unknown preset", async () => {
     /*await assert.rejects(
-      thg.buildWithPreset(mockPreset.name + "xx", undefined, undefined),
-      InvalidPresetError,
-    );*/
+          thg.buildWithPreset(mockPreset.name + "xx", undefined, undefined),
+          InvalidPresetError,
+        );*/
     expect(1).toEqual(1);
   });
 
   /*test.todo("Ok known preset", async () => {
-    await thg.buildWithPreset(mockPreset.name, undefined, {
-      forceOptimize: false,
-    });
-  });*/
+      await thg.buildWithPreset(mockPreset.name, undefined, {
+        forceOptimize: false,
+      });
+    });*/
 });

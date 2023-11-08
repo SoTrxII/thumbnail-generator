@@ -11,7 +11,10 @@ describe.skip("Object store :: Integration", () => {
   const objStore = new ExternalObjectStore(
     new DaprObjectStorageAdapter(new DaprClient().binding, "object-store"),
   );
-  const sampleFile = join(import.meta.url.replace("file://", ""), "../../assets/welcome.opus");
+  const sampleFile = join(
+    import.meta.url.replace("file://", ""),
+    "../../assets/welcome.opus",
+  );
   // Key used to retrieve the file
   const fileKey = basename(sampleFile);
 

@@ -1,5 +1,5 @@
-import { unlink } from "node:fs/promises";
-import { existsSync } from "fs";
+import {unlink} from "node:fs/promises";
+import {existsSync} from "fs";
 
 /**
  * A file "pointer" that delete the file its pointing to when

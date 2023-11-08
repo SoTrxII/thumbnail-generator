@@ -15,6 +15,7 @@ import {
   ThumbnailSchemaError,
 } from "../../../pkg/thumbnail-generator/thumbnail-generator-api.js";
 import { SmartFilePtr } from "../../../utils/smart-file-ptr.js";
+
 import("disposablestack/auto");
 
 interface ThumbRpgArgs {
@@ -72,9 +73,7 @@ export class ThumbRpg extends ThumbnailPreset {
     const fusedArgs = Object.assign(ThumbRpg.DEFAULT_ARGS, args);
     // Will throw on any validation error
     this.validateArgs(fusedArgs);
-    this.initializeFont(
-      join(this.options.fontDir, this.options.defaultFont),
-    );
+    this.initializeFont(join(this.options.fontDir, this.options.defaultFont));
     // Validation is OK, casting is safe
     return this.buildThumbnail(fusedArgs as ThumbRpgArgs);
   }

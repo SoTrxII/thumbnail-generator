@@ -3,7 +3,7 @@ import { TYPES } from "../../types.js";
 import { ThumbnailPreset } from "../../internal/presets/thumbnail-preset-api.js";
 import imagemin from "imagemin";
 import imageminPngquant from "imagemin-pngquant";
-import { stat, unlink, writeFile } from "fs/promises";
+import { stat, writeFile } from "fs/promises";
 import { tmpdir } from "os";
 import { hrtime } from "process";
 import {
@@ -12,7 +12,7 @@ import {
   IThumbnailGenerator,
   OptimizationError,
 } from "./thumbnail-generator-api.js";
-import { fontPath, FontResource, getFont } from "../../utils/resources.js";
+import { fontPath, FontResource } from "../../utils/resources.js";
 import { SmartFilePtr } from "../../utils/smart-file-ptr.js";
 
 @injectable()

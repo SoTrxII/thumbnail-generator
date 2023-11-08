@@ -8,13 +8,13 @@ import {
 import { container } from "./inversify.config.js";
 import { TYPES } from "./types.js";
 import { IThumbnailGenerator } from "./pkg/thumbnail-generator/thumbnail-generator-api.js";
-import { basename, resolve } from "path";
+import { basename } from "path";
 import { IObjectStore } from "./internal/object-store/objet-store-api.js";
 import { thumbnail } from "./proto/thumbnail.js";
+import { fontPath } from "./utils/resources.js";
 import ThumbnailRequest = thumbnail.ThumbnailRequest;
 import ThumbnailResponse = thumbnail.ThumbnailResponse;
 import UnimplementedThumbnailService = thumbnail.UnimplementedThumbnailService;
-import { fontPath } from "./utils/resources.js";
 
 const server = new Server();
 const PORT = 50051;
@@ -49,6 +49,7 @@ async function createThumbnail(
     callback(e, null);
   }
 }
+
 class Impl extends UnimplementedThumbnailService {
   CreateThumbnail(
     call: ServerUnaryCall<

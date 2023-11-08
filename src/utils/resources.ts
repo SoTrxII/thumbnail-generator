@@ -25,6 +25,7 @@ export enum FontResource {
 export function getImg(r: ImageResource): string {
   return join(imgPath, r);
 }
+
 export function getFont(r: FontResource): string {
   return join(fontPath, r);
 }

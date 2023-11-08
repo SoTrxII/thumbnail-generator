@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import { readFile } from "fs/promises";
 import { IObjectStoreProxy } from "./objet-store-api.js";
-import * as IClientBinding from "@dapr/dapr/interfaces/Client/IClientBinding.js"
+import * as IClientBinding from "@dapr/dapr/interfaces/Client/IClientBinding.js";
 
 @injectable()
 export class DaprObjectStorageAdapter implements IObjectStoreProxy {

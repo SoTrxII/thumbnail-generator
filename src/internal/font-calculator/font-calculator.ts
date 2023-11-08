@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { openSync, Font } from "fontkit";
+import { Font, openSync } from "fontkit";
 import { FontPixelSize, IFontCalculator } from "./font-calculator-api.js";
 
 @injectable()
@@ -63,8 +63,8 @@ export class FontCalculator implements IFontCalculator {
    */
 
   /*private round(x): number {
-        return (x + 32) & -64;
-      }*/
+          return (x + 32) & -64;
+        }*/
 
   /**
    * Return the height needed to write string on a screen of screenwidth width
