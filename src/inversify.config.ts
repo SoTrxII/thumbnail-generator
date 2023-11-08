@@ -17,6 +17,9 @@ import {
   IObjectStoreProxy,
 } from "./internal/object-store/objet-store-api.js";
 import { ExternalObjectStore } from "./internal/object-store/external-objet-store.js";
+import { ILogger } from "./internal/logger/logger-api.js";
+import { plainTextLogger } from "./internal/logger/logger-plain-text.js";
+import { ecsLogger } from "./internal/logger/logger-ecs.js";
 
 export const container = new Container();
 const DAPR_GRPC_PORT = process.env.DAPR_GRPC_PORT ?? "50002";
@@ -32,11 +35,9 @@ container.bind<IFontCalculator>(TYPES.FontCalculator).to(FontCalculator);
 
 container
   .bind<IImageManipulatorBuilder>(TYPES.ImageManipulatorBuilder)
-  .toDynamicValue(() => new ImageManipulatorBuilder());
+  .to(ImageManipulatorBuilder);
 
-container
-  .bind<IImageDownloader>(TYPES.ImageDownloader)
-  .toDynamicValue(() => new ImageDownloader());
+container.bind<IImageDownloader>(TYPES.ImageDownloader).to(ImageDownloader);
 
 container
   .bind<IObjectStoreProxy>(TYPES.ObjectStoreProxy)
@@ -44,20 +45,8 @@ container
 
 container.bind<IObjectStore>(TYPES.ObjectStore).to(ExternalObjectStore);
 
-container
-  .bind<ThumbnailPreset>(TYPES.ThumbnailPreset)
-  .toDynamicValue(
-    (context) =>
-      new ThumbRpg(
-        context.container.get(TYPES.FontCalculator),
-        context.container.get(TYPES.ImageManipulatorBuilder),
-        context.container.get(TYPES.ImageDownloader),
-      ),
-  );
+container.bind<ThumbnailPreset>(TYPES.ThumbnailPreset).to(ThumbRpg);
 
 container
   .bind<IThumbnailGenerator>(TYPES.ThumbnailGenerator)
-  .toDynamicValue(
-    (context) =>
-      new ThumbnailGenerator(context.container.getAll(TYPES.ThumbnailPreset)),
-  );
+  .to(ThumbnailGenerator);
