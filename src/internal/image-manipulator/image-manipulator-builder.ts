@@ -1,4 +1,4 @@
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import ffmpeg, { FfmpegCommand, FilterSpecification } from "fluent-ffmpeg";
 import { tmpdir } from "os";
 import sharp from "sharp";
@@ -8,6 +8,8 @@ import {
   IImageManipulatorBuilder,
   TextStyle,
 } from "./image-manipulator-builder-api.js";
+import { TYPES } from "../../types.js";
+import { ILogger } from "../logger/logger-api.js";
 
 export enum Alignment {
   NONE,
@@ -62,7 +64,7 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
    */
   private lastOutput = "0:v";
 
-  constructor() {
+  constructor(@inject(TYPES.Logger) private logger: ILogger) {
     this.ffmpegCommand = ffmpeg();
     this.shiftFiltergraph();
   }
@@ -383,13 +385,16 @@ export class ImageManipulatorBuilder implements IImageManipulatorBuilder {
       await Promise.all(this.pipeline.map(async (f) => await f()));
       this.ffmpegCommand
         .on("progress", (_) => {})
-        .on("stderr", function (stderrLine) {
-          //console.log("Stderr output: " + stderrLine + "\n");
+        .on("stderr", (stderrLine) => {
+          this.logger.debug(stderrLine);
         })
         .on("start", (cmdLine) => {
-          console.log(cmdLine + "\n");
+          this.logger.info(`Running ffmpeg with command : ${cmdLine}`);
         })
         .on("error", (err) => {
+          this.logger.error(
+            `An error happened while running ffmpeg for image ${outPath} : ${err}`,
+          );
           rej(err);
         })
         .on("end", () => {

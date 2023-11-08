@@ -2,7 +2,6 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-console.log(`__dirname : ${__dirname}`)
 const resPath = join(__dirname, "/../assets/");
 const imgPath = join(resPath, "images/");
 export const fontPath = join(resPath, "fonts/");

@@ -1,4 +1,4 @@
-import { injectable, multiInject } from "inversify";
+import { inject, injectable, multiInject } from "inversify";
 import { TYPES } from "../../types.js";
 import { ThumbnailPreset } from "../../internal/presets/thumbnail-preset-api.js";
 import imagemin from "imagemin";
@@ -14,6 +14,7 @@ import {
 } from "./thumbnail-generator-api.js";
 import { fontPath, FontResource } from "../../utils/resources.js";
 import { SmartFilePtr } from "../../utils/smart-file-ptr.js";
+import { ILogger } from "../../internal/logger/logger-api.js";
 
 @injectable()
 export class ThumbnailGenerator implements IThumbnailGenerator {
@@ -29,6 +30,7 @@ export class ThumbnailGenerator implements IThumbnailGenerator {
 
   constructor(
     @multiInject(TYPES.ThumbnailPreset) private presets: ThumbnailPreset[],
+    @inject(TYPES.Logger) private logger: ILogger,
   ) {}
 
   /**
@@ -57,8 +59,13 @@ export class ThumbnailGenerator implements IThumbnailGenerator {
       options.forceOptimize ||
       fileStat.size >= ThumbnailGenerator.THUMB_MAX_SIZE
     ) {
-      console.log("Optimizing image " + img.path);
-      let opti = await this.optimize(img);
+      this.logger.info(
+        `Img "${img.path}" is over 2MB (${
+          fileStat.size / 1024 / 1024
+        }MB). Optimizing it`,
+      );
+
+      const opti = await this.optimize(img);
       await img[Symbol.asyncDispose]();
       img = opti;
     }

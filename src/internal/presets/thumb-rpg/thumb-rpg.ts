@@ -15,6 +15,7 @@ import {
   ThumbnailSchemaError,
 } from "../../../pkg/thumbnail-generator/thumbnail-generator-api.js";
 import { SmartFilePtr } from "../../../utils/smart-file-ptr.js";
+import {ILogger} from "../../logger/logger-api.js";
 
 import("disposablestack/auto");
 
@@ -56,6 +57,7 @@ export class ThumbRpg extends ThumbnailPreset {
     @inject(TYPES.ImageManipulatorBuilder)
     protected manipulator: IImageManipulatorBuilder,
     @inject(TYPES.ImageDownloader) protected downloader: IImageDownloader,
+    @inject(TYPES.Logger) protected logger: ILogger,
   ) {
     super();
   }
@@ -134,7 +136,7 @@ export class ThumbRpg extends ThumbnailPreset {
     aRes
       .filter((r) => r.status === "rejected")
       .forEach((r: PromiseRejectedResult) =>
-        console.warn(`Impossible to download : ${r.reason}`),
+        this.logger.warn(`Impossible to download : ${r.reason}`),
       );
 
     const gmsImages = aRes

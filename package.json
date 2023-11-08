@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@dapr/dapr": "^3.2.0",
+    "@elastic/ecs-winston-format": "^1.5.0",
     "@grpc/grpc-js": "^1.9.9",
     "disposablestack": "^1.1.2",
     "fluent-ffmpeg": "^2.1.2",
@@ -31,7 +32,8 @@
     "reflect-metadata": "^0.1.13",
     "sharp": "^0.32.6",
     "ts-node": "^10.7.0",
-    "tslib": "^2.3.1"
+    "tslib": "^2.3.1",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "@fluffy-spoon/substitute": "^1.208.0",

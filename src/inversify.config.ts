@@ -31,6 +31,15 @@ const client = new DaprClient({
 });
 const objStoreName = process.env.OBJECT_STORE_NAME ?? "object-store";
 
+/**
+ * Logger
+ * Using ECS format in production to allows for an ELK stack to parse them
+ * Using plain text in dev to still have a human-readable format
+ */
+const logger =
+  process.env.NODE_ENV === "production" ? ecsLogger : plainTextLogger;
+container.bind<ILogger>(TYPES.Logger).toConstantValue(logger);
+
 container.bind<IFontCalculator>(TYPES.FontCalculator).to(FontCalculator);
 
 container
