@@ -31,7 +31,7 @@ describe("Thumb RPG integration testing", () => {
     await thumbRPG.build(data, {
       size: { width: 1920, height: 1080 },
       fontDir: fontPath,
-      defaultFontPath: FontResource.LIBERATION_MONO,
+      defaultFont: FontResource.LIBERATION_MONO,
       forceOptimize: false,
     });
   }, 20000);

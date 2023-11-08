@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import { GenerationOptions } from "../../pkg/thumbnail-generator/thumbnail-generator-api.js";
+import { SmartFilePtr } from "../../utils/smart-file-ptr.js";
 
 @injectable()
 export abstract class ThumbnailPreset {
@@ -16,7 +17,7 @@ export abstract class ThumbnailPreset {
   public async run(
     args: Record<string, any>,
     options: GenerationOptions,
-  ): Promise<string> {
+  ): Promise<SmartFilePtr> {
     this.options = options;
     return this.build(args);
   }
@@ -65,5 +66,5 @@ export abstract class ThumbnailPreset {
   protected abstract build(
     args: Record<string, any>,
     options?: GenerationOptions,
-  ): Promise<string>;
+  ): Promise<SmartFilePtr>;
 }

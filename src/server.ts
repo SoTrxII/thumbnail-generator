@@ -8,12 +8,13 @@ import {
 import { container } from "./inversify.config.js";
 import { TYPES } from "./types.js";
 import { IThumbnailGenerator } from "./pkg/thumbnail-generator/thumbnail-generator-api.js";
-import {basename, resolve} from "path";
+import { basename, resolve } from "path";
 import { IObjectStore } from "./internal/object-store/objet-store-api.js";
-import {thumbnail} from "./proto/thumbnail.js";
+import { thumbnail } from "./proto/thumbnail.js";
 import ThumbnailRequest = thumbnail.ThumbnailRequest;
 import ThumbnailResponse = thumbnail.ThumbnailResponse;
 import UnimplementedThumbnailService = thumbnail.UnimplementedThumbnailService;
+import { fontPath } from "./utils/resources.js";
 
 const server = new Server();
 const PORT = 50051;
@@ -34,24 +35,28 @@ async function createThumbnail(
     logoUrl: call.request.logoUrl,
   };
   try {
-    const imgPath = await gen.buildWithPreset("thumb-rpg", args, {
+    await using img = await gen.buildWithPreset("thumb-rpg", args, {
       size: { width: 1280, height: 720 },
-      fontDir: resolve("./assets/fonts/"),
+      fontDir: fontPath,
     });
-    console.log("Final image path : ", imgPath);
-    await store.create(imgPath);
+    console.log("Final image path : ", img);
+    await store.create(img.path);
     const res = new ThumbnailResponse();
-    res.thumbnailKey = basename(imgPath);
+    res.thumbnailKey = basename(img.path);
     callback(null, res);
   } catch (e) {
     console.log(` ${e.constructor.name}: ${e.toString()}`);
     callback(e, null);
   }
-
-
 }
 class Impl extends UnimplementedThumbnailService {
-  CreateThumbnail(call: ServerUnaryCall<thumbnail.ThumbnailRequest, thumbnail.ThumbnailResponse>, callback: sendUnaryData<thumbnail.ThumbnailResponse>): void {
+  CreateThumbnail(
+    call: ServerUnaryCall<
+      thumbnail.ThumbnailRequest,
+      thumbnail.ThumbnailResponse
+    >,
+    callback: sendUnaryData<thumbnail.ThumbnailResponse>,
+  ): void {
     createThumbnail(call, callback);
   }
 }

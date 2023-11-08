@@ -6,10 +6,7 @@ import { tmpdir } from "os";
 import { TYPES } from "../../../types.js";
 import { IFontCalculator } from "../../font-calculator/font-calculator-api.js";
 import { IImageManipulatorBuilder } from "../../image-manipulator/image-manipulator-builder-api.js";
-import {
-  IImageDownloader,
-  Image,
-} from "../../image-downloader/image-downloader-api.js";
+import { IImageDownloader } from "../../image-downloader/image-downloader-api.js";
 import { join } from "path";
 import { Alignment } from "../../image-manipulator/image-manipulator-builder.js";
 import Vibrant from "node-vibrant";
@@ -17,6 +14,7 @@ import {
   GenerationOptions,
   ThumbnailSchemaError,
 } from "../../../pkg/thumbnail-generator/thumbnail-generator-api.js";
+import { SmartFilePtr } from "../../../utils/smart-file-ptr.js";
 import("disposablestack/auto");
 
 interface ThumbRpgArgs {
@@ -68,14 +66,14 @@ export class ThumbRpg extends ThumbnailPreset {
   async build(
     args: Record<string, any>,
     options?: Partial<GenerationOptions>,
-  ): Promise<string> {
+  ): Promise<SmartFilePtr> {
     // This is a test backdoor
     if (options !== undefined) this.options = options as GenerationOptions;
     const fusedArgs = Object.assign(ThumbRpg.DEFAULT_ARGS, args);
     // Will throw on any validation error
     this.validateArgs(fusedArgs);
     this.initializeFont(
-      join(this.options.fontDir, this.options.defaultFontPath),
+      join(this.options.fontDir, this.options.defaultFont),
     );
     // Validation is OK, casting is safe
     return this.buildThumbnail(fusedArgs as ThumbRpgArgs);
@@ -104,7 +102,7 @@ export class ThumbRpg extends ThumbnailPreset {
     // TODO, accept more fonts ?
   }
 
-  async buildThumbnail(args: ThumbRpgArgs): Promise<string> {
+  async buildThumbnail(args: ThumbRpgArgs): Promise<SmartFilePtr> {
     const subtitleFontSize = this.fontCalculator.getIdealFontSizeForScreen(
       args.episodeTitle,
       this.scaleBoundaries(
@@ -142,7 +140,7 @@ export class ThumbRpg extends ThumbnailPreset {
 
     const gmsImages = aRes
       .filter((r) => r.status === "fulfilled")
-      .map((r: PromiseFulfilledResult<Image>) => {
+      .map((r: PromiseFulfilledResult<SmartFilePtr>) => {
         stack.use(r.value);
         return r.value;
       });
@@ -160,9 +158,9 @@ export class ThumbRpg extends ThumbnailPreset {
         height: this.options.size.height,
       });
 
-    const image = `${tmpdir()}/image-${Date.now()}.png`;
-    await this.manipulator.buildAndRun(image);
-    return image;
+    const imagePath = `${tmpdir()}/image-${Date.now()}.png`;
+    await this.manipulator.buildAndRun(imagePath);
+    return new SmartFilePtr(imagePath);
   }
 
   /**

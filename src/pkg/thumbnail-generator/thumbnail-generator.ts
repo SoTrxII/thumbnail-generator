@@ -13,13 +13,14 @@ import {
   OptimizationError,
 } from "./thumbnail-generator-api.js";
 import { fontPath, FontResource, getFont } from "../../utils/resources.js";
+import { SmartFilePtr } from "../../utils/smart-file-ptr.js";
 
 @injectable()
 export class ThumbnailGenerator implements IThumbnailGenerator {
   private static readonly DEFAULT_OPTIONS: GenerationOptions = {
     // Path to font files
     fontDir: fontPath,
-    defaultFontPath: getFont(FontResource.LIBERATION_MONO),
+    defaultFont: FontResource.LIBERATION_MONO,
     size: { width: 1280, height: 720 },
     forceOptimize: false,
   };
@@ -41,37 +42,35 @@ export class ThumbnailGenerator implements IThumbnailGenerator {
     presetName: string,
     args: Record<string, any>,
     options: Partial<GenerationOptions>,
-  ): Promise<string> {
+  ): Promise<SmartFilePtr> {
     const opt = Object.assign(ThumbnailGenerator.DEFAULT_OPTIONS, options);
 
     // Find a preset with the given name
     const preset = this.presets.find((p) => p.name === presetName);
     if (preset === undefined)
       throw new InvalidPresetError(`preset ${presetName} doesn't exists !`);
-    let imagePath = await preset.run(args, opt);
+    let img = await preset.run(args, opt);
 
     // If the resulting image is too big for a YouTube thumbnail (>2MB), optimize it
-    const fileStat = await stat(imagePath);
+    const fileStat = await stat(img.path);
     if (
       options.forceOptimize ||
       fileStat.size >= ThumbnailGenerator.THUMB_MAX_SIZE
     ) {
-      console.log("Optimizing image " + imagePath);
-      const optiPath = `${tmpdir()}/result_image_${hrtime().join("_")}`;
-      await this.optimizeImage(imagePath, optiPath);
-      await unlink(imagePath);
-      imagePath = optiPath;
+      console.log("Optimizing image " + img.path);
+      let opti = await this.optimize(img);
+      await img[Symbol.asyncDispose]();
+      img = opti;
     }
-    return imagePath;
+    return img;
   }
 
   /**
    * Optimize the provided image, reducing its size
-   * @param inPath
-   * @param outPath
+   * @param input
    */
-  async optimizeImage(inPath: string, outPath: string): Promise<void> {
-    const files = await imagemin([inPath], {
+  async optimize(input: SmartFilePtr): Promise<SmartFilePtr> {
+    const files = await imagemin([input.path], {
       // Imagemin uses globby, which expect unix format. Setting glob to true will break on Windows
       // see https://github.com/imagemin/imagemin/issues/352
       glob: false,
@@ -85,6 +84,9 @@ export class ThumbnailGenerator implements IThumbnailGenerator {
     const file = files?.[0];
     if (!file)
       throw new OptimizationError("Unexpected error during optimization");
-    await writeFile(outPath, file.data);
+
+    const optiPath = `${tmpdir()}/result_image_${hrtime().join("_")}`;
+    await writeFile(optiPath, file.data);
+    return new SmartFilePtr(optiPath);
   }
 }
