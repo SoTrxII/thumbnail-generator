@@ -22,7 +22,7 @@ import { plainTextLogger } from "./internal/logger/logger-plain-text.js";
 import { ecsLogger } from "./internal/logger/logger-ecs.js";
 
 export const container = new Container();
-const DAPR_GRPC_PORT = process.env.DAPR_GRPC_PORT ?? "50002";
+const DAPR_GRPC_PORT = process.env.DAPR_GRPC_PORT ?? "50001";
 
 const client = new DaprClient({
   daprHost: "127.0.0.1",
