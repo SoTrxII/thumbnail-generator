@@ -1,5 +1,6 @@
 import { createLogger, format, transports } from "winston";
 import { ILogger, ILoggerOpts } from "./logger-api.js";
+import { env } from "node:process";
 
 /**
  * Wrapper class around Winston simple log system
@@ -11,7 +12,7 @@ class plainTextWrapper implements ILogger {
     transports: [
       new transports.Console({
         format: format.simple(),
-        level: "debug",
+        level: env.LOG_LEVEL ?? "debug",
       }),
     ],
   });

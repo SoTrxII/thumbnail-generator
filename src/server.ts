@@ -54,7 +54,7 @@ async function createThumbnail(
     res.thumbnailKey = basename(img.path);
     callback(null, res);
   } catch (e) {
-    logger.error(` ${e.constructor.name}: ${e.toString()}`);
+    logger.error(`Error while generating thumbnail : ${e.constructor.name}: ${e.toString()}`);
     callback(e, null);
   }
 }
