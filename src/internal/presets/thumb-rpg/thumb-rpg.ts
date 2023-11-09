@@ -15,8 +15,7 @@ import {
   ThumbnailSchemaError,
 } from "../../../pkg/thumbnail-generator/thumbnail-generator-api.js";
 import { SmartFilePtr } from "../../../utils/smart-file-ptr.js";
-import {ILogger} from "../../logger/logger-api.js";
-
+import { ILogger } from "../../logger/logger-api.js";
 import("disposablestack/auto");
 
 interface ThumbRpgArgs {
@@ -37,10 +36,13 @@ interface ThumbRpgArgs {
 @injectable()
 export class ThumbRpg extends ThumbnailPreset {
   /** Default value for campaigns args */
-  private static readonly DEFAULT_ARGS = {
+  private static readonly DEFAULT_ARGS: Partial<ThumbRpgArgs> = {
     /** Default image */
     backgroundUrl:
       "https://res.cloudinary.com/datfhmsze/image/upload/c_thumb,w_200,g_face/v1595876755/deafault_campaign_background_tgfowg.jpg",
+
+    logoUrl:
+      "https://res.cloudinary.com/datfhmsze/image/upload/v1699555567/chicken_lb3mey.png",
   };
   private static readonly DEFAULT_OPTIONS = {
     size: { width: 1280, height: 720 },
@@ -71,22 +73,23 @@ export class ThumbRpg extends ThumbnailPreset {
     options?: Partial<GenerationOptions>,
   ): Promise<SmartFilePtr> {
     // This is a test backdoor
-    if (options !== undefined) this.options = options as GenerationOptions;
-    const fusedArgs = Object.assign(ThumbRpg.DEFAULT_ARGS, args);
-    // Will throw on any validation error
-    this.validateArgs(fusedArgs);
+    if (options !== undefined) this.options = options as GenerationOptions; // Will throw on any validation error
+    this.validateArgs(args as ThumbRpgArgs);
     this.initializeFont(join(this.options.fontDir, this.options.defaultFont));
     // Validation is OK, casting is safe
-    return this.buildThumbnail(fusedArgs as ThumbRpgArgs);
+    return this.buildThumbnail(args as ThumbRpgArgs);
   }
 
   /**
    * Validate the provided arguments against the registered schema
    * @param args
    */
-  validateArgs(args: Record<string, any>): void {
-    // There is an error in jsonschema typing, we must ignore the JSON error to continue
-    //@ts-ignore
+  validateArgs(args: ThumbRpgArgs): void {
+    // Add default values
+    if (!args?.backgroundUrl)
+      args.backgroundUrl = ThumbRpg.DEFAULT_ARGS.backgroundUrl;
+    if (!args?.logoUrl) args.logoUrl = ThumbRpg.DEFAULT_ARGS.logoUrl;
+
     const validation = validate(args, schema);
     if (validation.errors.length > 0) {
       throw new ThumbnailSchemaError(validation.errors);
