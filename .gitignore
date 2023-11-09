@@ -5,4 +5,4 @@ coverage
 build
 .idea
 .yarn
-src/assets/bucket
+bucket
