@@ -16,9 +16,10 @@ import ThumbnailRequest = thumbnail.ThumbnailRequest;
 import ThumbnailResponse = thumbnail.ThumbnailResponse;
 import UnimplementedThumbnailService = thumbnail.UnimplementedThumbnailService;
 import { ILogger } from "./internal/logger/logger-api.js";
+import { env } from "node:process";
 
 const server = new Server();
-const PORT = 50051;
+const PORT = env.APP_PORT ?? 50051;
 const store = container.get<IObjectStore>(TYPES.ObjectStore);
 const logger = container.get<ILogger>(TYPES.Logger);
 
@@ -54,7 +55,11 @@ async function createThumbnail(
     res.thumbnailKey = basename(img.path);
     callback(null, res);
   } catch (e) {
-    logger.error(`Error while generating thumbnail : ${e.constructor.name}: ${e.toString()}`);
+    logger.error(
+      `Error while generating thumbnail : ${
+        e.constructor.name
+      }: ${e.toString()}`,
+    );
     callback(e, null);
   }
 }
