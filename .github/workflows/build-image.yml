@@ -46,7 +46,7 @@ jobs:
 
 
   create-release:
-    needs: image-build
+    needs: build-image
     runs-on: ubuntu-latest
     steps:
       - uses: "marvinpinto/action-automatic-releases@latest"
