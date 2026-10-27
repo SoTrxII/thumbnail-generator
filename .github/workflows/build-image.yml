@@ -18,7 +18,9 @@ jobs:
       - name: Dependencies
         run: |
           corepack enable
-          corepack prepare pnpm@latest --activate
+          # The lockfile's pnpm, as in the Dockerfile: latest (v12 in 2026-10)
+          # rejects its lockfileVersion 6.0
+          corepack prepare pnpm@8.10.0 --activate
           pnpm install
 
       - name: Proto
