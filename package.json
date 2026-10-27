@@ -18,7 +18,7 @@
   "dependencies": {
     "@dapr/dapr": "^3.2.0",
     "@elastic/ecs-winston-format": "^1.5.0",
-    "@grpc/grpc-js": "^1.9.9",
+    "@grpc/grpc-js": "^1.14.6",
     "disposablestack": "^1.1.2",
     "fluent-ffmpeg": "^2.1.2",
     "fontkit": "^2.0.2",

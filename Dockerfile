@@ -1,6 +1,8 @@
 FROM node:20-alpine as build
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# The lockfile's pnpm. Latest (v11 in 2026-10) refuses to install: it skips
+# the build scripts of sharp, pngquant-bin and grpc-tools unless approved
+RUN corepack enable && corepack prepare pnpm@8.10.0 --activate
 COPY . /app/
 RUN pnpm install
 RUN pnpm run proto
